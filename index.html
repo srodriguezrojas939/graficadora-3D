@@ -73,12 +73,12 @@
     <div class="calculadora-moderna">
         <div class="header-section">
             <h1>Graficadora 3D</h1>
-            <p>Sólido de Puntos Equilibrado</p>
+            <p>√(Raiz) Cuadrada²</p>
         </div>
 
         <label>Ecuación f(x, y, z) = 0</label>
         <div class="input-group">
-            <input id="ecuacion" placeholder="x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
+            <input id="ecuacion" placeholder="(3 - sqrt(x^2 + y^2))^2 + z^2 - 1" value="(3 - sqrt(x^2 + y^2))^2 + z^2 - 1">
             <select id="colorSurface" class="color-select" onchange="this.style.backgroundColor = this.value">
                 <option value="#3498db" style="background:#3498db"></option>
                 <option value="#e74c3c" style="background:#e74c3c"></option>
@@ -105,7 +105,10 @@
 
         <div class="botones-container">
             <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
-            <button onclick="descargarCaptura()" class="boton-estilo">Guardar PNG</button>
+            <button onclick="descargarCaptura()" class="boton-estilo">
+                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
+                Guardar PNG 
+            </button>
         </div>
 
         <div id="contenedor-grafica"></div>
@@ -218,20 +221,27 @@
             alert("Error: Revisa la ecuación.");
         }
     }
-
-    function descargarCaptura() {
+  function descargarCaptura() {
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
+
         canvasExp.width = canvas3d.width;
         canvasExp.height = canvas3d.height;
+
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvasExp.width, canvasExp.height);
         ctx.drawImage(canvas3d, 0, 0);
+
+        ctx.font = "bold 26px 'Playfair Display'";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.textAlign = "right";
+        ctx.fillText("√(Raiz) Cuadrada²", canvasExp.width - 40, canvasExp.height - 40);
+
         const link = document.createElement('a');
-        link.download = 'Grafica_3D_Puntos.png';
+        link.download = 'Grafica_Solida_RaizCuadrada.png';
         link.href = canvasExp.toDataURL('image/png');
-        link.click();
+        link.click();    
     }
 
     function animate() {
