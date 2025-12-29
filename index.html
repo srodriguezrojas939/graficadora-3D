@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Graficadora 3D Sólida - Raiz Cuadrada</title>
+    <title>Graficadora 3D - Alta Densidad de Partículas</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -13,64 +13,60 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
 
-        .fade-in { opacity: 0; transform: translateY(25px); animation: fadeUp 0.9s ease forwards; }
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s ease forwards; }
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-        body { background: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; overflow-x: hidden; }
+        body { background: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; box-sizing: border-box; font-family: 'Open Sans', sans-serif; }
 
         .calculadora-moderna {
-            max-width: 700px; width: 100%; padding: 40px 30px;
+            max-width: 700px; width: 100%; padding: 35px 25px;
             background: #F2F2F2; border-radius: 35px;
-            font-family: 'Open Sans', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
             box-sizing: border-box;
         }
 
-        .header-section { text-align: center; margin-bottom: 25px; }
-        .header-section h1 { font-size: 30px; margin: 0; font-family: 'Playfair Display', serif; }
-        .header-section p { font-size: 16px; font-weight: 600; color: #333; font-family: 'Playfair Display', serif; margin: 5px 0; }
+        .header-section { text-align: center; margin-bottom: 20px; }
+        .header-section h1 { font-size: 28px; margin: 0; font-family: 'Playfair Display', serif; }
+        .header-section p { font-size: 16px; font-weight: 600; color: #444; margin: 5px 0; font-family: 'Playfair Display', serif;}
 
-        label { display: block; font-size: 11px; margin-bottom: 8px; margin-left: 10px; font-weight: 700; text-transform: uppercase; color: #555; }
+        label { display: block; font-size: 10px; margin-bottom: 6px; margin-left: 12px; font-weight: 700; text-transform: uppercase; color: #666; letter-spacing: 0.5px; }
 
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
 
         input, select {
-            font-family: 'Open Sans', sans-serif; font-size: 14px;
-            padding: 12px 15px; border: 1px solid #ccc; border-radius: 25px;
-            background: white; box-sizing: border-box; transition: 0.3s;
-            width: 100%;
+            font-size: 14px; padding: 12px 18px; border: 1px solid #ddd; border-radius: 25px;
+            background: white; width: 100%; box-sizing: border-box;
         }
 
         .color-select {
-            width: 45px; height: 45px; border-radius: 50%;
+            width: 48px; height: 48px; border-radius: 50%;
             flex-shrink: 0; cursor: pointer; appearance: none;
-            -webkit-appearance: none; border: 3px solid white; padding: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            -webkit-appearance: none; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .botones-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
         .boton-estilo {
             display: flex; align-items: center; justify-content: center;
             background: white; border: 1px solid #ccc; border-radius: 30px;
-            padding: 14px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s;
-            text-decoration: none; color: black;
+            padding: 14px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.2s;
+            color: black; text-decoration: none;
         }
         .boton-principal { background: black; color: white; border: none; }
         
         #contenedor-grafica {
-            margin-top: 25px; background: white; border-radius: 25px;
-            height: 400px; border: 1px solid #ddd; overflow: hidden;
-            position: relative;
+            margin-top: 20px; background: white; border-radius: 25px;
+            height: 400px; border: 1px solid #eee; overflow: hidden; position: relative;
+            /* Cursor de agarre para indicar que se puede mover */
+            cursor: grab;
         }
+        #contenedor-grafica:active { cursor: grabbing; }
 
-        #info-box { text-align: center; margin-top: 12px; font-size: 11px; color: #888; }
+        #info-box { text-align: center; margin-top: 10px; font-size: 11px; color: #999; font-weight: 600; }
 
-        /* Estilos móviles */
         @media (max-width: 600px) {
-            body { padding: 10px; }
-            .calculadora-moderna { padding: 25px 15px; border-radius: 25px; }
-            .header-section h1 { font-size: 24px; }
-            #contenedor-grafica { height: 320px; }
-            input, select { font-size: 16px; }
+            .calculadora-moderna { padding: 25px 15px; }
+            #contenedor-grafica { height: 350px; }
+            input, select { font-size: 16px; } /* Evita zoom en iOS */
         }
     </style>
 </head>
@@ -79,117 +75,118 @@
 <div class="fade-in" style="width: 100%; display: flex; justify-content: center;">
     <div class="calculadora-moderna">
         <div class="header-section">
-            <h1>Graficadora 3D Sólida</h1>
-            <p>√(Raiz) Cuadrada²</p>
+            <h1>Graficadora 3D</h1>
+            <p>Partículas de Ultra Alta Densidad</p>
         </div>
 
-        <label>Ecuación f(x, y, z) = 0</label>
+        <label>Ecuación Implícita f(x, y, z) = 0</label>
         <div class="input-group">
-            <input id="ecuacion" class="fn-input" placeholder="x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
+            <input id="ecuacion" placeholder="Ej: x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
             <select id="colorSurface" class="color-select" onchange="this.style.backgroundColor = this.value">
                 <option value="#3498db" style="background:#3498db"></option>
                 <option value="#e74c3c" style="background:#e74c3c"></option>
                 <option value="#2ecc71" style="background:#2ecc71"></option>
-                <option value="#333333" style="background:#333333"></option>
-                <option value="#f1c40f" style="background:#f1c40f"></option>
+                <option value="#9b59b6" style="background:#9b59b6"></option>
+                <option value="#34495e" style="background:#34495e"></option>
             </select>
         </div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <div style="flex: 1;">
-                <label>Rango</label>
+                <label>Rango de Ejes</label>
                 <input type="number" id="rango" value="4">
             </div>
             <div style="flex: 1;">
-                <label>Calidad</label>
+                <label>Densidad de Puntos</label>
                 <select id="resolucion">
-                    <option value="15">Baja</option>
-                    <option value="25" selected>Normal</option>
-                    <option value="35">Alta</option>
+                    <option value="60">Media (Rápida)</option>
+                    <option value="90" selected>Alta (Sólida)</option>
+                    <option value="120">Extrema (~400k ptos)</option>
                 </select>
             </div>
         </div>
 
         <div class="botones-container">
-            <button onclick="generarSuperficie()" class="boton-estilo boton-principal">Generar Sólido</button>
-            <button onclick="descargarCaptura()" class="boton-estilo">Descargar PNG</button>
+            <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido de Partículas</button>
+            <button onclick="descargarCaptura()" class="boton-estilo">Guardar Imagen PNG</button>
         </div>
 
         <div id="contenedor-grafica"></div>
-        <div id="info-box">Rojo: X | Verde: Y | Azul: Z (Ejes numerados)</div>
+        <div id="info-box">Usa 1 dedo para rotar y 2 dedos para hacer zoom</div>
     </div>
 </div>
 
 <canvas id="canvas-export" style="display:none;"></canvas>
 
 <script>
-    // Inicialización del color
     const colorSelect = document.getElementById('colorSurface');
     colorSelect.style.backgroundColor = colorSelect.value;
 
     const contenedor = document.getElementById('contenedor-grafica');
+    
+    // Configuración del renderizador para máxima calidad
+    const renderer = new THREE.WebGLRenderer({ 
+        antialias: true, 
+        preserveDrawingBuffer: true,
+        powerPreference: "high-performance"
+    });
+    renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limita DPI en móviles 4K para rendimiento
+    contenedor.appendChild(renderer.domElement);
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
-    
-    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-    renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    contenedor.appendChild(renderer.domElement);
 
     const camera = new THREE.PerspectiveCamera(45, contenedor.clientWidth / contenedor.clientHeight, 0.1, 1000);
     camera.position.set(8, 8, 8);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
 
-    // Luces para un efecto sólido y brillante
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(10, 10, 10);
-    scene.add(light);
-    const lightBack = new THREE.DirectionalLight(0xffffff, 0.5);
-    lightBack.position.set(-10, -10, -10);
-    scene.add(lightBack);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-
-    let meshSólido = null;
+    let puntosObjeto = null;
     let gridGroup = new THREE.Group();
     scene.add(gridGroup);
 
-    // Función para crear etiquetas numéricas
-    function crearEtiqueta(texto, pos) {
+    // Función para crear etiquetas numéricas nítidas
+    function crearEtiqueta(texto, x, y, z) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 64; canvas.height = 64;
-        ctx.font = 'bold 36px Arial';
-        ctx.fillStyle = '#999';
+        canvas.width = 128; canvas.height = 64; // Canvas más ancho para números
+        ctx.font = 'bold 42px Arial';
+        ctx.fillStyle = '#888888';
         ctx.textAlign = 'center';
-        ctx.fillText(texto, 32, 45);
+        ctx.fillText(texto, 64, 45);
         
         const texture = new THREE.CanvasTexture(canvas);
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
-        sprite.position.copy(pos);
-        sprite.scale.set(0.6, 0.6, 1);
+        // Usamos NearestFilter para que el texto se vea nítido al alejarse
+        texture.minFilter = THREE.NearestFilter; 
+        
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.8 }));
+        sprite.position.set(x, y, z);
+        sprite.scale.set(1, 0.5, 1); // Ajuste de escala según el canvas
         return sprite;
     }
 
     function dibujarEjes(r) {
         gridGroup.clear();
-        const grid = new THREE.GridHelper(r * 2, r * 2, 0xdddddd, 0xeeeeee);
+        // Grilla más sutil
+        const grid = new THREE.GridHelper(r * 2, r * 2, 0xe0e0e0, 0xf0f0f0);
         gridGroup.add(grid);
         
         const axes = new THREE.AxesHelper(r + 0.5);
         gridGroup.add(axes);
 
-        // Números en los ejes
-        for(let i = -r; i <= r; i++) {
-            if(i === 0) continue;
-            gridGroup.add(crearEtiqueta(i, new THREE.Vector3(i, 0.2, 0))); // X
-            gridGroup.add(crearEtiqueta(i, new THREE.Vector3(0, i, 0.2))); // Y
+        // Etiquetas numéricas solo en pasos enteros
+        for(let i = -Math.floor(r); i <= Math.floor(r); i++) {
+            if(i === 0 || i % 2 !== 0 && r > 5) continue; // Si el rango es muy grande, saltar números impares
+            gridGroup.add(crearEtiqueta(i, i, 0.1, 0)); // Eje X
+            gridGroup.add(crearEtiqueta(i, 0, 0.1, i)); // Eje Z
         }
     }
 
-    function generarSuperficie() {
-        if (meshSólido) scene.remove(meshSólido);
+    function generarNubePuntos() {
+        if (puntosObjeto) scene.remove(puntosObjeto);
         
         const ecuacionStr = document.getElementById('ecuacion').value;
         const rango = parseFloat(document.getElementById('rango').value);
@@ -198,50 +195,54 @@
 
         dibujarEjes(rango);
 
-        try {
-            const expr = math.compile(ecuacionStr);
-            const material = new THREE.MeshPhongMaterial({ 
-                color: colorHex, 
-                side: THREE.DoubleSide, 
-                shininess: 80,
-                flatShading: false 
-            });
+        // Pequeño delay para que el UI no se congele inmediatamente al pulsar el botón
+        setTimeout(() => {
+            try {
+                const expr = math.compile(ecuacionStr);
+                const positions = [];
+                const step = (rango * 2) / res;
+                
+                // Umbral muy ajustado para que los puntos estén exactamente en la superficie
+                const threshold = step * 0.4; 
 
-            const geometry = new THREE.BufferGeometry();
-            const positions = [];
-            const step = (rango * 2) / res;
-
-            // Motor de generación de "Piel" sólida
-            for (let x = -rango; x <= rango; x += step) {
-                for (let y = -rango; y <= rango; y += step) {
-                    for (let z = -rango; z <= rango; z += step) {
-                        
-                        const val = expr.evaluate({x, y, z});
-                        
-                        // Si el punto está cerca del umbral 0, creamos un micro-volumen conectado
-                        if (Math.abs(val) < step * 0.8) {
-                            const bGeom = new THREE.BoxBufferGeometry(step * 1.1, step * 1.1, step * 1.1);
-                            const posAttr = bGeom.attributes.position;
-                            for (let i = 0; i < posAttr.count; i++) {
-                                positions.push(posAttr.getX(i) + x, posAttr.getY(i) + y, posAttr.getZ(i) + z);
+                // Escaneo volumétrico de alta densidad
+                for (let x = -rango; x <= rango; x += step) {
+                    for (let y = -rango; y <= rango; y += step) {
+                        for (let z = -rango; z <= rango; z += step) {
+                            // Evaluación matemática (la parte más pesada)
+                            const val = expr.evaluate({x, y, z});
+                            
+                            if (Math.abs(val) < threshold) {
+                                positions.push(x, y, z);
                             }
                         }
                     }
                 }
+
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+                // MATERIAL DE PARTÍCULAS OPTIMIZADO PARA EFECTO SÓLIDO
+                const material = new THREE.PointsMaterial({ 
+                    color: colorHex, 
+                    size: 0.025, // Tamaño MUY pequeño
+                    sizeAttenuation: true, // Se hacen pequeños a la distancia
+                    transparent: true,
+                    opacity: 0.75, // Transparencia para mezclar puntos superpuestos
+                    blending: THREE.NormalBlending
+                });
+
+                puntosObjeto = new THREE.Points(geometry, material);
+                scene.add(puntosObjeto);
+
+            } catch (e) {
+                alert("Error: Verifica la ecuación.");
             }
-
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            geometry.computeVertexNormals(); // Esto suaviza las caras para que parezca macizo
-
-            meshSólido = new THREE.Mesh(geometry, material);
-            scene.add(meshSólido);
-
-        } catch (e) {
-            alert("Error en la ecuación matemática.");
-        }
+        }, 50);
     }
 
     function descargarCaptura() {
+        renderer.render(scene, camera); // Render forzado antes de capturar
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
@@ -250,8 +251,9 @@
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvasExp.width, canvasExp.height);
         ctx.drawImage(canvas3d, 0, 0);
+        
         const link = document.createElement('a');
-        link.download = 'Grafica_3D_Solida.png';
+        link.download = 'Solido_Particulas_AltaDensidad.png';
         link.href = canvasExp.toDataURL('image/png');
         link.click();
     }
@@ -263,13 +265,19 @@
     }
 
     window.addEventListener('resize', () => {
-        camera.aspect = contenedor.clientWidth / contenedor.clientHeight;
+        const width = contenedor.clientWidth;
+        const height = contenedor.clientHeight;
+        camera.aspect = width / height;
         camera.updateProjectionMatrix();
-        renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
+        renderer.setSize(width, height);
+        // Re-ajustar pixel ratio al cambiar tamaño
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
 
-    generarSuperficie();
+    // Iniciar generación
+    generarNubePuntos();
     animate();
 </script>
+
 </body>
 </html>
