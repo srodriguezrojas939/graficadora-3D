@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Graficadora 3D - Alta Densidad de Partículas</title>
+    <title>Graficadora 3D - Puntos Perfectos</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -56,17 +56,14 @@
         #contenedor-grafica {
             margin-top: 20px; background: white; border-radius: 25px;
             height: 400px; border: 1px solid #eee; overflow: hidden; position: relative;
-            /* Cursor de agarre para indicar que se puede mover */
-            cursor: grab;
         }
-        #contenedor-grafica:active { cursor: grabbing; }
 
         #info-box { text-align: center; margin-top: 10px; font-size: 11px; color: #999; font-weight: 600; }
 
         @media (max-width: 600px) {
             .calculadora-moderna { padding: 25px 15px; }
             #contenedor-grafica { height: 350px; }
-            input, select { font-size: 16px; } /* Evita zoom en iOS */
+            input, select { font-size: 16px; }
         }
     </style>
 </head>
@@ -76,173 +73,153 @@
     <div class="calculadora-moderna">
         <div class="header-section">
             <h1>Graficadora 3D</h1>
-            <p>Partículas de Ultra Alta Densidad</p>
+            <p>Sólido de Puntos Equilibrado</p>
         </div>
 
-        <label>Ecuación Implícita f(x, y, z) = 0</label>
+        <label>Ecuación f(x, y, z) = 0</label>
         <div class="input-group">
-            <input id="ecuacion" placeholder="Ej: x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
+            <input id="ecuacion" placeholder="x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
             <select id="colorSurface" class="color-select" onchange="this.style.backgroundColor = this.value">
                 <option value="#3498db" style="background:#3498db"></option>
                 <option value="#e74c3c" style="background:#e74c3c"></option>
                 <option value="#2ecc71" style="background:#2ecc71"></option>
                 <option value="#9b59b6" style="background:#9b59b6"></option>
-                <option value="#34495e" style="background:#34495e"></option>
+                <option value="#000000" style="background:#000000"></option>
             </select>
         </div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <div style="flex: 1;">
-                <label>Rango de Ejes</label>
+                <label>Rango</label>
                 <input type="number" id="rango" value="4">
             </div>
             <div style="flex: 1;">
-                <label>Densidad de Puntos</label>
+                <label>Densidad</label>
                 <select id="resolucion">
-                    <option value="60">Media (Rápida)</option>
-                    <option value="90" selected>Alta (Sólida)</option>
-                    <option value="120">Extrema (~400k ptos)</option>
+                    <option value="50">Baja</option>
+                    <option value="80" selected>Normal (Recomendado)</option>
+                    <option value="110">Alta</option>
                 </select>
             </div>
         </div>
 
         <div class="botones-container">
-            <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido de Partículas</button>
-            <button onclick="descargarCaptura()" class="boton-estilo">Guardar Imagen PNG</button>
+            <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
+            <button onclick="descargarCaptura()" class="boton-estilo">Guardar PNG</button>
         </div>
 
         <div id="contenedor-grafica"></div>
-        <div id="info-box">Usa 1 dedo para rotar y 2 dedos para hacer zoom</div>
+        <div id="info-box">Ejes: X (Rojo) | Y (Verde) | Z (Azul)</div>
     </div>
 </div>
 
 <canvas id="canvas-export" style="display:none;"></canvas>
 
 <script>
+    // Iniciar color del círculo
     const colorSelect = document.getElementById('colorSurface');
     colorSelect.style.backgroundColor = colorSelect.value;
 
     const contenedor = document.getElementById('contenedor-grafica');
-    
-    // Configuración del renderizador para máxima calidad
-    const renderer = new THREE.WebGLRenderer({ 
-        antialias: true, 
-        preserveDrawingBuffer: true,
-        powerPreference: "high-performance"
-    });
-    renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limita DPI en móviles 4K para rendimiento
-    contenedor.appendChild(renderer.domElement);
-
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    contenedor.appendChild(renderer.domElement);
 
     const camera = new THREE.PerspectiveCamera(45, contenedor.clientWidth / contenedor.clientHeight, 0.1, 1000);
     camera.position.set(8, 8, 8);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
 
     let puntosObjeto = null;
     let gridGroup = new THREE.Group();
     scene.add(gridGroup);
 
-    // Función para crear etiquetas numéricas nítidas
     function crearEtiqueta(texto, x, y, z) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 128; canvas.height = 64; // Canvas más ancho para números
-        ctx.font = 'bold 42px Arial';
-        ctx.fillStyle = '#888888';
+        canvas.width = 64; canvas.height = 64;
+        ctx.font = 'bold 36px Arial';
+        ctx.fillStyle = '#bbbbbb';
         ctx.textAlign = 'center';
-        ctx.fillText(texto, 64, 45);
-        
+        ctx.fillText(texto, 32, 45);
         const texture = new THREE.CanvasTexture(canvas);
-        // Usamos NearestFilter para que el texto se vea nítido al alejarse
-        texture.minFilter = THREE.NearestFilter; 
-        
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.8 }));
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
         sprite.position.set(x, y, z);
-        sprite.scale.set(1, 0.5, 1); // Ajuste de escala según el canvas
+        sprite.scale.set(0.6, 0.6, 1);
         return sprite;
     }
 
     function dibujarEjes(r) {
         gridGroup.clear();
-        // Grilla más sutil
-        const grid = new THREE.GridHelper(r * 2, r * 2, 0xe0e0e0, 0xf0f0f0);
+        const grid = new THREE.GridHelper(r * 2, r * 2, 0xeeeeee, 0xf9f9f9);
         gridGroup.add(grid);
-        
         const axes = new THREE.AxesHelper(r + 0.5);
         gridGroup.add(axes);
-
-        // Etiquetas numéricas solo en pasos enteros
-        for(let i = -Math.floor(r); i <= Math.floor(r); i++) {
-            if(i === 0 || i % 2 !== 0 && r > 5) continue; // Si el rango es muy grande, saltar números impares
-            gridGroup.add(crearEtiqueta(i, i, 0.1, 0)); // Eje X
-            gridGroup.add(crearEtiqueta(i, 0, 0.1, i)); // Eje Z
+        for(let i = -r; i <= r; i++) {
+            if(i === 0) continue;
+            gridGroup.add(crearEtiqueta(i, i, 0.2, 0)); // X
+            gridGroup.add(crearEtiqueta(i, 0, i, 0.2)); // Z
         }
     }
 
     function generarNubePuntos() {
-        if (puntosObjeto) scene.remove(puntosObjeto);
+        // 1. Limpiar objeto anterior
+        if (puntosObjeto) {
+            scene.remove(puntosObjeto);
+            puntosObjeto.geometry.dispose();
+            puntosObjeto.material.dispose();
+        }
         
         const ecuacionStr = document.getElementById('ecuacion').value;
         const rango = parseFloat(document.getElementById('rango').value);
         const res = parseInt(document.getElementById('resolucion').value);
-        const colorHex = document.getElementById('colorSurface').value;
+        const colorHex = document.getElementById('colorSurface').value; // Captura el color actual
 
         dibujarEjes(rango);
 
-        // Pequeño delay para que el UI no se congele inmediatamente al pulsar el botón
-        setTimeout(() => {
-            try {
-                const expr = math.compile(ecuacionStr);
-                const positions = [];
-                const step = (rango * 2) / res;
-                
-                // Umbral muy ajustado para que los puntos estén exactamente en la superficie
-                const threshold = step * 0.4; 
+        try {
+            const expr = math.compile(ecuacionStr);
+            const positions = [];
+            const step = (rango * 2) / res;
+            const threshold = step * 0.5; 
 
-                // Escaneo volumétrico de alta densidad
-                for (let x = -rango; x <= rango; x += step) {
-                    for (let y = -rango; y <= rango; y += step) {
-                        for (let z = -rango; z <= rango; z += step) {
-                            // Evaluación matemática (la parte más pesada)
-                            const val = expr.evaluate({x, y, z});
-                            
-                            if (Math.abs(val) < threshold) {
-                                positions.push(x, y, z);
-                            }
+            for (let x = -rango; x <= rango; x += step) {
+                for (let y = -rango; y <= rango; y += step) {
+                    for (let z = -rango; z <= rango; z += step) {
+                        const val = expr.evaluate({x, y, z});
+                        if (Math.abs(val) < threshold) {
+                            positions.push(x, y, z);
                         }
                     }
                 }
-
-                const geometry = new THREE.BufferGeometry();
-                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
-                // MATERIAL DE PARTÍCULAS OPTIMIZADO PARA EFECTO SÓLIDO
-                const material = new THREE.PointsMaterial({ 
-                    color: colorHex, 
-                    size: 0.025, // Tamaño MUY pequeño
-                    sizeAttenuation: true, // Se hacen pequeños a la distancia
-                    transparent: true,
-                    opacity: 0.75, // Transparencia para mezclar puntos superpuestos
-                    blending: THREE.NormalBlending
-                });
-
-                puntosObjeto = new THREE.Points(geometry, material);
-                scene.add(puntosObjeto);
-
-            } catch (e) {
-                alert("Error: Verifica la ecuación.");
             }
-        }, 50);
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+            // TAMAÑO EQUILIBRADO (0.08) Y COLOR FIJO
+            const material = new THREE.PointsMaterial({ 
+                color: new THREE.Color(colorHex), 
+                size: 0.08, 
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            puntosObjeto = new THREE.Points(geometry, material);
+            scene.add(puntosObjeto);
+
+        } catch (e) {
+            alert("Error: Revisa la ecuación.");
+        }
     }
 
     function descargarCaptura() {
-        renderer.render(scene, camera); // Render forzado antes de capturar
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
@@ -251,9 +228,8 @@
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvasExp.width, canvasExp.height);
         ctx.drawImage(canvas3d, 0, 0);
-        
         const link = document.createElement('a');
-        link.download = 'Solido_Particulas_AltaDensidad.png';
+        link.download = 'Grafica_3D_Puntos.png';
         link.href = canvasExp.toDataURL('image/png');
         link.click();
     }
@@ -265,16 +241,11 @@
     }
 
     window.addEventListener('resize', () => {
-        const width = contenedor.clientWidth;
-        const height = contenedor.clientHeight;
-        camera.aspect = width / height;
+        camera.aspect = contenedor.clientWidth / contenedor.clientHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-        // Re-ajustar pixel ratio al cambiar tamaño
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
     });
 
-    // Iniciar generación
     generarNubePuntos();
     animate();
 </script>
