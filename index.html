@@ -3,236 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graficadora 3D Pro - Implícita</title>
+    <title>Graficadora 3D Pro - Raiz Cuadrada</title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"></script>
+
     <style>
-        :root {
-            --bg-color: #f4f4f4;
-            --card-bg: #ffffff;
-            --accent: #000000;
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
+        .fade-in { opacity: 0; transform: translateY(25px); animation: fadeUp 0.9s ease forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        body { background: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+
+        .calculadora-moderna {
+            max-width: 650px; width: 100%; padding: 40px 30px;
+            background: #F2F2F2; border-radius: 35px;
+            font-family: 'Open Sans', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-        }
+        .header-section { text-align: center; margin-bottom: 25px; }
+        .header-section h1 { font-size: 32px; margin: 0; font-family: 'Playfair Display', serif; }
+        .header-section p { font-size: 18px; font-weight: 600; color: #333; font-family: 'Playfair Display', serif; margin: 5px 0; }
 
-        .container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        h1 { font-size: 24px; margin-bottom: 5px; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; }
+        label { display: block; font-size: 13px; margin-bottom: 8px; margin-left: 10px; font-weight: 600; text-transform: uppercase; color: #555; }
 
         .input-group {
-            margin-bottom: 15px;
-            text-align: left;
+            display: flex; gap: 10px; position: relative;
+            margin-bottom: 15px; align-items: center;
         }
 
-        label {
-            display: block;
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
+        input, select {
+            font-family: 'Open Sans', sans-serif; font-size: 14px;
+            padding: 12px 15px; border: 1px solid #ccc; border-radius: 25px;
+            background: white; box-sizing: border-box; transition: 0.3s;
         }
 
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
+        .fn-input { flex-grow: 1; }
 
-        /* SELECTOR DE COLOR CIRCULAR */
-        .color-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        input[type="color"] {
+        /* --- ESTILO DEL SELECTOR DE COLOR COMO CÍRCULO --- */
+        .color-select {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            cursor: pointer;
+            appearance: none;
             -webkit-appearance: none;
-            border: none;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            background: none;
+            border: 2px solid white;
+            padding: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch {
-            border: 2px solid #ddd;
-            border-radius: 50%; /* Esto lo hace círculo */
+        .botones-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .boton-estilo {
+            display: flex; align-items: center; justify-content: center;
+            background: white; border: 1px solid #ccc; border-radius: 30px;
+            padding: 14px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s;
+            text-decoration: none; color: black;
+        }
+        .boton-principal { background: black; color: white; border: none; }
+        
+        #contenedor-grafica {
+            margin-top: 25px; background: white; border-radius: 25px;
+            height: 400px; border: 1px solid #ddd; overflow: hidden;
+            position: relative;
         }
 
-        button {
-            width: 100%;
-            padding: 15px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
-        }
-
-        button:active { transform: scale(0.98); }
-
-        #canvas-container {
-            width: 100%;
-            height: 400px;
-            margin-top: 20px;
-            border-radius: 20px;
-            overflow: hidden;
-            background: #fff;
-            border: 1px solid #eee;
-        }
+        #info-box { text-align: center; margin-top: 10px; font-size: 12px; color: #888; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Graficadora 3D Pro</h1>
-    <p>Ecuaciones Implícitas $f(x, y, z) = 0$</p>
-
-    <div class="input-group">
-        <label>Ecuación (igualada a 0)</label>
-        <input type="text" id="equation" placeholder="x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
-        <small style="color: #888;">Ej esfera radio 3: x^2 + y^2 + z^2 - 9</small>
-    </div>
-
-    <div style="display: flex; gap: 10px;">
-        <div class="input-group" style="flex: 2;">
-            <label>Rango de análisis</label>
-            <input type="number" id="range" value="5">
+<div class="fade-in" style="width: 100%; display: flex; justify-content: center;">
+    <div class="calculadora-moderna">
+        <div class="header-section">
+            <h1>Graficadora 3D Pro</h1>
+            <p>√(Raiz) Cuadrada²</p>
         </div>
-        <div class="input-group" style="flex: 1;">
-            <label>Color</label>
-            <div class="color-wrapper">
-                <input type="color" id="surfaceColor" value="#3498db">
+
+        <label>Ecuación f(x, y, z) = 0</label>
+        <div class="input-group">
+            <input id="ecuacion" class="fn-input" placeholder="Ej: x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
+            <select id="colorSurface" class="color-select" onchange="this.style.backgroundColor = this.value">
+                <option value="#333333" style="background:#333333"></option>
+                <option value="#5D8AA8" style="background:#5D8AA8"></option>
+                <option value="#6B8E23" style="background:#6B8E23"></option>
+                <option value="#A52A2A" style="background:#A52A2A"></option>
+                <option value="#7F5A8B" style="background:#7F5A8B"></option>
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div style="flex: 1;">
+                <label>Rango (Zoom)</label>
+                <input type="number" id="rango" value="5" style="width: 100%;">
+            </div>
+            <div style="flex: 1;">
+                <label>Calidad</label>
+                <select id="resolucion" style="width: 100%;">
+                    <option value="20">Rápida</option>
+                    <option value="40" selected>Media</option>
+                    <option value="60">Alta (Lenta)</option>
+                </select>
             </div>
         </div>
+
+        <div class="botones-container">
+            <button onclick="generarGrafica()" class="boton-estilo boton-principal">Generar Superficie 3D</button>
+            <button onclick="descargarCaptura()" class="boton-estilo">
+                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
+                Descargar PNG con Marca de Agua
+            </button>
+        </div>
+
+        <div id="contenedor-grafica"></div>
+        <div id="info-box">Usa el mouse para rotar y hacer zoom en la figura</div>
     </div>
-
-    <button onclick="updateGraph()">Generar Superficie 3D</button>
-
-    <div id="canvas-container"></div>
 </div>
 
+<canvas id="canvas-export" style="display:none;"></canvas>
+
 <script>
-    // --- Configuración de Escena Three.js ---
-    const container = document.getElementById('canvas-container');
+    // Inicializar el color del círculo al cargar
+    document.getElementById('colorSurface').style.backgroundColor = document.getElementById('colorSurface').value;
+
+    // Configuración de Three.js
+    const contenedor = document.getElementById('contenedor-grafica');
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
     
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(7, 7, 7);
-    camera.lookAt(0, 0, 0);
+    // El renderer debe tener preserveDrawingBuffer para poder tomar capturas
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(contenedor.clientWidth, 400);
+    contenedor.appendChild(renderer.domElement);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
+    const camera = new THREE.PerspectiveCamera(45, contenedor.clientWidth / 400, 0.1, 1000);
+    camera.position.set(8, 8, 8);
+    camera.lookAt(0,0,0);
 
     // Luces
-    const ambientLight = new THREE.AmbientLight(0x404040, 2);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(1, 1, 1);
-    scene.add(directionalLight);
+    const light1 = new THREE.DirectionalLight(0xffffff, 1);
+    light1.position.set(1, 1, 1);
+    scene.add(light1);
+    const light2 = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(light2);
 
-    // Ejes auxiliares
-    const axesHelper = new THREE.AxesHelper(5);
-    scene.add(axesHelper);
+    let meshActual = null;
 
-    let currentMesh = null;
+    function generarGrafica() {
+        if (meshActual) scene.remove(meshActual);
 
-    // --- Lógica de Graficación Implícita (Marching Cubes Simplificado) ---
-    function updateGraph() {
-        if (currentMesh) scene.remove(currentMesh);
+        const ecuacionStr = document.getElementById('ecuacion').value;
+        const rango = parseFloat(document.getElementById('rango').value);
+        const res = parseInt(document.getElementById('resolucion').value);
+        const colorHex = document.getElementById('colorSurface').value;
 
-        const equationText = document.getElementById('equation').value;
-        const range = parseFloat(document.getElementById('range').value);
-        const color = document.getElementById('surfaceColor').value;
-        const resolution = 30; // Puntos por eje (ajustar para calidad/velocidad)
-
-        const geometry = new THREE.BufferGeometry();
-        const vertices = [];
-        
         try {
-            const node = math.parse(equationText);
-            const code = node.compile();
-
-            // Creamos una malla de puntos y evaluamos la función
-            const size = range * 2;
-            const step = size / resolution;
+            const expr = math.compile(ecuacionStr);
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
             
-            // Función para obtener valor en x,y,z
-            const getVal = (x, y, z) => code.evaluate({x, y, z});
-
-            // Implementación básica de búsqueda de superficie (Marching Cubes conceptual)
-            // Para fines de este script, crearemos una nube de puntos que forman la superficie
-            // donde f(x,y,z) está cerca de 0.
+            const step = (rango * 2) / res;
             
-            for (let i = -range; i < range; i += step) {
-                for (let j = -range; j < range; j += step) {
-                    for (let k = -range; k < range; k += step) {
-                        const v0 = getVal(i, j, k);
-                        // Verificamos si hay un cambio de signo en los ejes cercanos
-                        if (Math.abs(v0) < step * 1.5) { // Umbral de proximidad a la superficie
-                            vertices.push(i, j, k);
+            // Marching Cubes Simplificado (Point Cloud denso para estabilidad)
+            for (let x = -rango; x <= rango; x += step) {
+                for (let y = -rango; y <= rango; y += step) {
+                    for (let z = -rango; z <= rango; z += step) {
+                        const val = expr.evaluate({x, y, z});
+                        // Si el valor está muy cerca de 0, es parte de la superficie
+                        if (Math.abs(val) < step * 0.8) {
+                            vertices.push(x, y, z);
                         }
                     }
                 }
             }
 
-            const spriteMaterial = new THREE.PointsMaterial({
-                color: color,
-                size: 0.1,
-                transparent: false
-            });
+            const mat = new THREE.PointsMaterial({ color: colorHex, size: 0.15 });
+            const pointsGeo = new THREE.BufferGeometry();
+            pointsGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            meshActual = new THREE.Points(pointsGeo, mat);
+            scene.add(meshActual);
 
-            const pointsGeometry = new THREE.BufferGeometry();
-            pointsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            currentMesh = new THREE.Points(pointsGeometry, spriteMaterial);
-            
-            scene.add(currentMesh);
-
-        } catch (error) {
-            alert("Error en la ecuación: " + error.message);
+        } catch (e) {
+            alert("Error en la ecuación. Asegúrate de usar x, y, z.");
         }
     }
 
-    // Animación
+    function descargarCaptura() {
+        const canvas3d = renderer.domElement;
+        const canvasExp = document.getElementById('canvas-export');
+        const ctx = canvasExp.getContext('2d');
+
+        // Ajustar tamaño del export
+        canvasExp.width = canvas3d.width;
+        canvasExp.height = canvas3d.height;
+
+        // 1. Fondo blanco
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvasExp.width, canvasExp.height);
+
+        // 2. Dibujar el 3D
+        ctx.drawImage(canvas3d, 0, 0);
+
+        // 3. Marca de agua
+        ctx.font = "bold 24px 'Playfair Display'";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.textAlign = "right";
+        ctx.fillText("√(Raiz) Cuadrada²", canvasExp.width - 30, canvasExp.height - 30);
+
+        // 4. Descarga
+        const link = document.createElement('a');
+        link.download = 'Captura_3D_RaizCuadrada.png';
+        link.href = canvasExp.toDataURL('image/png');
+        link.click();
+    }
+
+    // Animación simple
     function animate() {
         requestAnimationFrame(animate);
-        if (currentMesh) currentMesh.rotation.y += 0.005;
+        if (meshActual) meshActual.rotation.y += 0.005;
         renderer.render(scene, camera);
     }
 
+    // Ajuste de ventana
     window.addEventListener('resize', () => {
-        camera.aspect = container.clientWidth / container.clientHeight;
+        renderer.setSize(contenedor.clientWidth, 400);
+        camera.aspect = contenedor.clientWidth / 400;
         camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    updateGraph();
+    generarGrafica();
     animate();
 </script>
 
