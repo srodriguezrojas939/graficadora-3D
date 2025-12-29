@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graficadora 3D Pro - Raiz Cuadrada</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
+        .fade-in { opacity: 0; transform: translateY(25px); animation: fadeUp 0.9s ease forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        body { background: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+
+        .calculadora-moderna {
+            max-width: 800px; width: 100%; padding: 40px 30px;
+            background: #F2F2F2; border-radius: 35px;
+            font-family: 'Open Sans', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .header-section { text-align: center; margin-bottom: 25px; }
+        .header-section h1 { font-size: 32px; margin: 0; font-family: 'Playfair Display', serif; }
+        .header-section p { font-size: 18px; font-weight: 600; color: #333; font-family: 'Playfair Display', serif; margin: 5px 0; }
+
+        label { display: block; font-size: 13px; margin-bottom: 8px; margin-left: 10px; font-weight: 600; }
+
+        input, select {
+            width: 100%; font-family: 'Open Sans', sans-serif; font-size: 14px;
+            padding: 12px 15px; border: 1px solid #ccc; border-radius: 25px;
+            background: white; box-sizing: border-box; transition: 0.3s;
+        }
+
+        .botones-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        
+        .boton-estilo {
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 30px; padding: 14px; cursor: pointer; 
+            font-weight: 600; font-size: 14px; transition: 0.3s; border: 1px solid #ccc;
+            text-decoration: none; font-family: 'Open Sans', sans-serif;
+        }
+
+        .boton-principal { background: black; color: white; border: none; }
+        .boton-principal:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .boton-descarga { background: white; color: black; }
+
+        #contenedor-grafica {
+            margin-top: 25px; background: white; border-radius: 25px;
+            padding: 10px; border: 1px solid #ddd; height: 500px; overflow: hidden;
+        }
+
+        #info-box { text-align: center; margin-top: 10px; font-size: 12px; color: #666; font-weight: 600; }
+        
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="fade-in">
+    <div class="calculadora-moderna">
+        <div class="header-section">
+            <h1>Graficadora 3D Pro</h1>
+            <p>√(Raiz) Cuadrada²</p>
+        </div>
+
+        <label>Función z = f(x, y)</label>
+        <input id="funcion-3d" placeholder="Ej: sin(x)*cos(y)" value="x^2 - y^2" style="margin-bottom: 15px;">
+
+        <div class="grid-inputs">
+            <div>
+                <label>Rango de análisis</label>
+                <input id="rango" type="number" value="5">
+            </div>
+            <div>
+                <label>Paleta de Color</label>
+                <select id="color-escala">
+                    <option value="Greys">Negro Carbón</option>
+                    <option value="Blues">Azul Acero</option>
+                    <option value="Greens">Verde Oliva</option>
+                    <option value="Reds">Rojo Vino</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="botones-container">
+            <button onclick="graficar3D()" class="boton-estilo boton-principal">Generar Superficie 3D</button>
+            <button onclick="exportarImagen3D()" class="boton-estilo boton-descarga">
+                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px">
+                Descargar PNG con Marca de Agua
+            </button>
+        </div>
+
+        <div id="contenedor-grafica"></div>
+        <div id="info-box">Arrastra para rotar • Scroll para zoom</div>
+    </div>
+</div>
+
+<canvas id="canvas-export" style="display:none;"></canvas>
+
+<script>
+let gd; // Guardará la referencia del gráfico Plotly
+
+function graficar3D() {
+    const expr = document.getElementById('funcion-3d').value;
+    const rangoVal = parseFloat(document.getElementById('rango').value);
+    const colorEscala = document.getElementById('color-escala').value;
+    
+    let xValues = [];
+    let yValues = [];
+    let zValues = [];
+    const pasos = 45; 
+    const step = (rangoVal * 2) / pasos;
+
+    try {
+        const compiled = nerdamer(expr);
+        for (let i = 0; i <= pasos; i++) {
+            let x = -rangoVal + i * step;
+            xValues.push(x);
+            let zRow = [];
+            for (let j = 0; j <= pasos; j++) {
+                let y = -rangoVal + j * step;
+                if (i === 0) yValues.push(y);
+                let val = compiled.evaluate({x: x, y: y}).toString();
+                zRow.push(parseFloat(val));
+            }
+            zValues.push(zRow);
+        }
+
+        const data = [{
+            z: zValues, x: xValues, y: yValues,
+            type: 'surface',
+            colorscale: colorEscala,
+            showscale: false
+        }];
+
+        const layout = {
+            autosize: true,
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: { title: 'X', gridcolor: '#eee' },
+                yaxis: { title: 'Y', gridcolor: '#eee' },
+                zaxis: { title: 'Z', gridcolor: '#eee' },
+                camera: { eye: { x: 1.5, y: 1.5, z: 1.1 } }
+            },
+            paper_bgcolor: 'white',
+            plot_bgcolor: 'white'
+        };
+
+        Plotly.newPlot('contenedor-grafica', data, layout, {responsive: true, displayModeBar: false})
+        .then(function(graphDiv) {
+            gd = graphDiv;
+        });
+
+    } catch (e) {
+        document.getElementById('info-box').innerHTML = "<span style='color:red'>Error matemático en la función.</span>";
+    }
+}
+
+async function exportarImagen3D() {
+    if (!gd) return;
+
+    // 1. Obtener imagen base de Plotly (Alta resolución x2)
+    const dataUrl = await Plotly.toImage(gd, { format: 'png', width: 1200, height: 900 });
+
+    const canvas = document.getElementById('canvas-export');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // 2. Dibujar fondo y gráfica
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        // 3. MARCA DE AGUA: √(Raiz) Cuadrada² en Playfair Display Negrita
+        ctx.font = "bold 45px 'Playfair Display'";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.3)"; // Elegante semitransparente
+        ctx.textAlign = "right";
+        ctx.fillText("√(Raiz) Cuadrada²", canvas.width - 50, canvas.height - 50);
+
+        // 4. Descarga automática
+        const link = document.createElement('a');
+        link.download = 'grafica-3d-raiz-cuadrada.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+    img.src = dataUrl;
+}
+
+window.onload = graficar3D;
+</script>
+
+</body>
+</html>
