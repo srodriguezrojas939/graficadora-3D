@@ -37,7 +37,6 @@
             background: white; width: 100%; box-sizing: border-box; outline: none;
         }
 
-        /* SELECTOR DE COLOR ESTILO CUADRADO (Imagen enviada) */
         .color-picker-container {
             width: 48px; height: 48px; flex-shrink: 0; position: relative;
             border-radius: 12px; overflow: hidden; border: 2px solid white;
@@ -64,14 +63,14 @@
 
         #info-box { text-align: center; margin-top: 10px; font-size: 11px; color: #999; font-weight: 600; }
 
-        /* PÍLDORAS ESTILO BARRA GRIS */
         .pills-nav-container {
             background: #e4e4e4; padding: 6px; border-radius: 40px;
-            display: flex; justify-content: space-between; gap: 5px; margin-top: 25px;
+            display: flex; justify-content: space-between; gap: 3px; margin-top: 25px;
+            overflow-x: auto;
         }
         .pill-btn {
-            background: transparent; border: none; padding: 10px 10px; border-radius: 30px;
-            font-size: 10px; font-weight: 700; color: #666; cursor: pointer; 
+            background: transparent; border: none; padding: 10px 8px; border-radius: 30px;
+            font-size: 9px; font-weight: 700; color: #666; cursor: pointer; 
             transition: 0.3s; flex: 1; white-space: nowrap; text-transform: none;
         }
         .pill-btn.active { background: white; color: black; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -98,36 +97,16 @@
         .guia-uso-container h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-top: 0; color: #000; }
         .guia-uso-container h3 { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 8px; color: #333; }
 
-        /* Estilos adicionales para la Guía */
-.guia-scroll {
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 15px;
-}
-.guia-scroll::-webkit-scrollbar { width: 6px; }
-.guia-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        .guia-scroll { max-height: 500px; overflow-y: auto; padding-right: 15px; }
+        .guia-scroll::-webkit-scrollbar { width: 6px; }
+        .guia-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 
-.code-box {
-    background: #f9f9f9;
-    border-left: 4px solid #000;
-    padding: 10px;
-    font-family: monospace;
-    font-size: 13px;
-    margin: 10px 0;
-    border-radius: 4px;
-}
-.nota-autor {
-    margin-top: 30px;
-    padding: 20px;
-    background: #eee;
-    border-radius: 20px;
-    font-style: italic;
-    font-size: 13px;
-}
-.eje-color { font-weight: bold; }
-.red { color: #e74c3c; }
-.green { color: #2ecc71; }
-.blue { color: #3498db; }
+        .code-box { background: #f9f9f9; border-left: 4px solid #000; padding: 10px; font-family: monospace; font-size: 13px; margin: 10px 0; border-radius: 4px; }
+        .nota-autor { margin-top: 30px; padding: 20px; background: #eee; border-radius: 20px; font-style: italic; font-size: 13px; }
+        .eje-color { font-weight: bold; }
+        .red { color: #e74c3c; }
+        .green { color: #2ecc71; }
+        .blue { color: #3498db; }
     </style>
 </head>
 <body>
@@ -174,137 +153,126 @@
         <div id="info-box">Ejes: X (Rojo) | Y (Verde) | Z (Azul)</div>
 
         <div class="pills-nav-container">
-            <button class="pill-btn active" onclick="showTab('cuadricas', this)">Superficies cuadricas</button>
+            <button class="pill-btn active" onclick="showTab('cuadricas', this)">Cuadricas</button>
             <button class="pill-btn" onclick="showTab('funciones', this)">Funciones</button>
+            <button class="pill-btn" onclick="showTab('planos', this)">Planos</button>
             <button class="pill-btn" onclick="showTab('simbolos', this)">Simbolos</button>
             <button class="pill-btn" onclick="showTab('guia', this)">Guia de uso</button>
         </div>
 
         <div id="cuadricas" class="tab-content active"><div class="symbols-grid"></div></div>
         <div id="funciones" class="tab-content"><div class="symbols-grid"></div></div>
+        <div id="planos" class="tab-content"><div class="symbols-grid"></div></div>
         <div id="simbolos" class="tab-content"><div class="symbols-grid"></div></div>
-       <div id="guia" class="tab-content">
-    <div class="guia-uso-container guia-scroll">
-        <h2>Manual de Usuario</h2>
-        <hr>
+        
+        <div id="guia" class="tab-content">
+            <div class="guia-uso-container guia-scroll">
+                <h2>Manual de Usuario</h2>
+                <hr>
+                <h3>1. Todo debe ser igual a cero</h3>
+                <p>Para que funcione, tienes que pasar todos los términos a un solo lado de la ecuación.</p>
+                <div class="code-box">
+                    <b>Mal:</b> z = x^2 + y^2 <br>
+                    <b>Bien:</b> x^2 + y^2 - z
+                </div>
+                <p><small>Ejemplo Esfera: No escribas x^2 + y^2 + z^2 = 9, escribe <b>x^2 + y^2 + z^2 - 9</b></small></p>
 
-        <h3>1. Todo debe ser igual a cero</h3>
-        <p>Para que funcione, tienes que pasar todos los términos a un solo lado de la ecuación.</p>
-        <div class="code-box">
-            <b>Mal:</b> z = x^2 + y^2 <br>
-            <b>Bien:</b> x^2 + y^2 - z
+                <h3>2. Sintaxis matemática</h3>
+                <p>El motor usa la lógica de <b>Math.js</b>. Sé explícito con los símbolos:</p>
+                <ul>
+                    <li><b>Potencias:</b> Usa el "sombrerito" <b>^</b>. Ej: x^2, y^3.</li>
+                    <li><b>Multiplicación:</b> Es mejor usar el asterisco: <b>2 * x</b>.</li>
+                    <li><b>Paréntesis:</b> Úsalos para agrupar fracciones. Ej: (x + y) / (z + 1).</li>
+                    <li><b>Funciones:</b> Puedes usar sin(), cos(), tan(), sqrt(), abs() y exp().</li>
+                </ul>
+
+                <h3>3. Errores comunes</h3>
+                <p><b>Variables:</b> Solo usa <b>x, y, z</b> en minúsculas. Letras como "a" o "b" darán error.</p>
+                <p><b>El símbolo "=":</b> El cuadro de texto ya asume el "= 0". Por favor, despeja la ecuación.</p>
+                <p><b>Rango:</b> Si tu figura es grande pero el rango es pequeño (ej. 5), no verás nada. Ajusta el rango según tu ecuación.</p>
+
+                <h3>4. Tips de visualización</h3>
+                <p>Te recomiendo utilizar la <b>calidad más alta</b> e ir jugando con el rango. Empieza desde 1 y súbelo gradualmente.</p>
+                <p><b>Superficies Infinitas:</b> Si graficas un plano, verás que se corta como un cuadrado. Es normal, es el límite del cubo de análisis (el Rango).</p>
+
+                <h3>5. Guía de Colores de los Ejes</h3>
+                <p>Para no perderte en el espacio al rotar:</p>
+                <p>🔴 <span class="eje-color red">Rojo:</span> Eje "X" (Izquierda / Derecha)</p>
+                <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y" (Profundidad)</p>
+                <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura / Arriba-Abajo)</p>
+
+                <h3>6. Capturas de pantalla</h3>
+                <p>Antes de usar <b>"Descargar PNG"</b>, acomoda la cámara:</p>
+                <ul>
+                    <li><b>Click Izquierdo:</b> Rotar para buscar el mejor ángulo.</li>
+                    <li><b>Scroll (Rueda):</b> Acercarte o alejarte (Zoom).</li>
+                    <li><b>Click Derecho:</b> Centrar la figura si se movió.</li>
+                </ul>
+
+                <h3>7. Botón de Generar Sólido</h3>
+                <p><b>¡Importante!</b> Cada vez que hagas una modificación en la ecuación, rango o densidad, debes dar click en el botón negro de <b>Generar Sólido</b>.</p>
+
+                <div class="nota-autor">
+                    <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida. Ten en cuenta esta guía y prueba copiando las funciones que te dejé para entender lo fascinante que es el espacio 3D.
+                </div>
+            </div>
         </div>
-        <p><small>Ejemplo Esfera: No escribas x^2 + y^2 + z^2 = 9, escribe <b>x^2 + y^2 + z^2 - 9</b></small></p>
-
-        <h3>2. Sintaxis matemática</h3>
-        <p>El motor usa la lógica de <b>Math.js</b>. Sé explícito con los símbolos:</p>
-        <ul>
-            <li><b>Potencias:</b> Usa el "sombrerito" <b>^</b>. Ej: x^2, y^3.</li>
-            <li><b>Multiplicación:</b> Es mejor usar el asterisco: <b>2 * x</b>.</li>
-            <li><b>Paréntesis:</b> Úsalos para agrupar fracciones. Ej: (x + y) / (z + 1).</li>
-            <li><b>Funciones:</b> Puedes usar sin(), cos(), tan(), sqrt(), abs() y exp().</li>
-        </ul>
-
-        <h3>3. Errores comunes</h3>
-        <p><b>Variables:</b> Solo usa <b>x, y, z</b> en minúsculas. Letras como "a" o "b" darán error.</p>
-        <p><b>El símbolo "=":</b> El cuadro de texto ya asume el "= 0". Por favor, despeja la ecuación.</p>
-        <p><b>Rango:</b> Si tu figura es grande pero el rango es pequeño (ej. 5), no verás nada. Ajusta el rango según tu ecuación.</p>
-
-        <h3>4. Tips de visualización</h3>
-        <p>Te recomiendo utilizar la <b>calidad más alta</b> e ir jugando con el rango. Empieza desde 1 y súbelo gradualmente.</p>
-        <p><b>Superficies Infinitas:</b> Si graficas un plano, verás que se corta como un cuadrado. Es normal, es el límite del cubo de análisis (el Rango).</p>
-
-        <h3>5. Guía de Colores de los Ejes</h3>
-        <p>Para no perderte en el espacio al rotar:</p>
-        <p>🔴 <span class="eje-color red">Rojo:</span> Eje "X" (Izquierda / Derecha)</p>
-        <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y" (Profundidad)</p>
-        <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura / Arriba-Abajo)</p>
-
-        <h3>6. Capturas de pantalla</h3>
-        <p>Antes de usar <b>"Descargar PNG"</b>, acomoda la cámara:</p>
-        <ul>
-            <li><b>Click Izquierdo:</b> Rotar para buscar el mejor ángulo.</li>
-            <li><b>Scroll (Rueda):</b> Acercarte o alejarte (Zoom).</li>
-            <li><b>Click Derecho:</b> Centrar la figura si se movió.</li>
-        </ul>
-
-        <h3>7. Botón de Generar Sólido</h3>
-        <p><b>¡Importante!</b> Cada vez que hagas una modificación en la ecuación, rango o densidad, debes dar click en el botón negro de <b>Generar Sólido</b>.</p>
-
-        <div class="nota-autor">
-            <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida. Ten en cuenta esta guía y prueba copiando las funciones que te dejé para entender lo fascinante que es el espacio 3D.
-        </div>
-    </div>
-</div>
     </div>
 </div>
 
 <canvas id="canvas-export" style="display:none;"></canvas>
 
 <script>
-    // --- CONFIGURACIÓN DE BOTONES (Formato s y t) ---
     const dataTabs = {
         cuadricas: [
-
-    { s: 'x^2 + y^2 + z^2 - 9', t: 'ESFERA' },
-    { s: '(x/3)^2 + (y/2)^2 + (z/1.5)^2 - 1', t: 'ELIPSOIDE' },
-    { s: 'x^2 + y^2 - z^2 - 1', t: 'HIPERBOLOIDE 1 HOJA' },
-    { s: 'z^2 - x^2 - y^2 - 1', t: 'HIPERBOLOIDE 2 HOJAS' },
-    { s: 'x^2 + y^2 - z^2', t: 'CONO ELÍPTICO' },
-    { s: 'x^2 + y^2 - z', t: 'PARABOLOIDE ELÍPTICO' },
-    { s: 'y^2 - x^2 - z', t: 'PARABOLOIDE HIPERBÓLICO' },
-    { s: 'x^2 + y^2 - 4', t: 'CILINDRO ELÍPTICO' },
-    { s: 'x^2 - z^2 - 1', t: 'CILINDRO HIPERBÓLICO' },
-    { s: 'x^2 - z', t: 'CILINDRO PARABÓLICO' }
+            { s: 'x^2 + y^2 + z^2 - 9', t: 'ESFERA' },
+            { s: '(x/3)^2 + (y/2)^2 + (z/1.5)^2 - 1', t: 'ELIPSOIDE' },
+            { s: 'x^2 + y^2 - z^2 - 1', t: 'HIPERBOLOIDE 1 HOJA' },
+            { s: 'z^2 - x^2 - y^2 - 1', t: 'HIPERBOLOIDE 2 HOJAS' },
+            { s: 'x^2 + y^2 - z^2', t: 'CONO ELÍPTICO' },
+            { s: 'x^2 + y^2 - z', t: 'PARABOLOIDE ELÍPTICO' },
+            { s: 'y^2 - x^2 - z', t: 'PARABOLOIDE HIPERBÓLICO' },
+            { s: 'x^2 + y^2 - 4', t: 'CILINDRO ELÍPTICO' },
+            { s: 'x^2 - z^2 - 1', t: 'CILINDRO HIPERBÓLICO' },
+            { s: 'x^2 - z', t: 'CILINDRO PARABÓLICO' }
         ],
         funciones: [
-            { s: 'z - sin(x)*cos(y)', t: 'ONDULADO' }
+            { s: 'z - sin(x)*cos(y)', t: 'ONDULADO' },
             { s: '(3 - sqrt(x^2 + y^2))^2 + z^2 - 1', t: 'TOROIDE (DONA)' },
-    { s: '(x^2 + (9/4)y^2 + z^2 - 1)^3 - x^2*z^3 - (9/80)*y^2*z^3', t: 'CORAZÓN 3D' },
-    { s: 'z - sin(sqrt(x^2 + y^2))', t: 'GOTA EN AGUA' },
-    { s: 'x^4 - 5*x^2 + y^4 - 5*y^2 + z^4 - 5*z^2 + 11.8', t: 'TANGLE CUBE' },
-    { s: 'z - (x^3 - 3*x*y^2)', t: 'SILLA DE MONO' },
-    { s: 'z - cos(x) - cos(y)', t: 'CARTÓN DE HUEVOS' },
-    { s: 'x^4 + y^4 + z^4 - 6', t: 'COJÍN GEOMÉTRICO' },
-    { s: '1/(x^2 + y^2 + z^2) + 1/((x-2.5)^2 + y^2 + z^2) - 1', t: 'FUSIÓN (METABALLS)' },
-    { s: 'x^8 + y^8 + z^8 - 12', t: 'SÚPER-ESFERA' },
-    { s: 'sin(x) + sin(y) + sin(z)', t: 'GYROID APX.' }
-    { s: 'x', t: 'PLANO TRANSVERSAL (YZ)' },
-    { s: 'y', t: 'PLANO LONGITUDINAL (XZ)' },
-    { s: 'z', t: 'PLANO HORIZONTAL (XY)' },
-    { s: 'x - 2', t: 'PLANO X DESPLAZADO' },
-    { s: 'z + 1.5', t: 'PLANO DE ELEVACIÓN INFERIOR' },
-    { s: 'x + y', t: 'PLANO DIAGONAL BISECTOR XY' },
-    { s: 'x - y', t: 'PLANO DIAGONAL INVERSO XY' },
-    { s: 'x + z', t: 'PLANO INCLINADO LATERAL (45°)' },
-    { s: 'y - z', t: 'PLANO DE INCLINACIÓN FRONTAL' },
-    { s: 'x + y + z', t: 'PLANO OBLICUO ISOMÉTRICO' },
-    { s: 'x + y - 2', t: 'PLANO OBLICUO DESPLAZADO' },
-    { s: '2*x + y + z', t: 'PLANO DE PENDIENTE COMPUESTA' },
-    { s: 'x + 0.5*y - z', t: 'PLANO DE ORIENTACIÓN ESPACIAL' },
-    { s: 'x - z - 2', t: 'PLANO INCLINADO DESPLAZADO' },
-    { s: '0.5*x + 0.5*y + 0.5*z - 1', t: 'PLANO OBLICUO PARAMETRIZADO' } 
-    ],
-    
+            { s: '(x^2 + (9/4)y^2 + z^2 - 1)^3 - x^2*z^3 - (9/80)*y^2*z^3', t: 'CORAZÓN 3D' },
+            { s: 'z - sin(sqrt(x^2 + y^2))', t: 'GOTA EN AGUA' },
+            { s: 'x^4 - 5*x^2 + y^4 - 5*y^2 + z^4 - 5*z^2 + 11.8', t: 'TANGLE CUBE' },
+            { s: 'z - (x^3 - 3*x*y^2)', t: 'SILLA DE MONO' },
+            { s: 'z - cos(x) - cos(y)', t: 'CARTÓN DE HUEVOS' },
+            { s: 'x^4 + y^4 + z^4 - 6', t: 'COJÍN GEOMÉTRICO' },
+            { s: '1/(x^2 + y^2 + z^2) + 1/((x-2.5)^2 + y^2 + z^2) - 1', t: 'FUSIÓN (METABALLS)' },
+            { s: 'x^8 + y^8 + z^8 - 12', t: 'SÚPER-ESFERA' },
+            { s: 'sin(x) + sin(y) + sin(z)', t: 'GYROID APX.' }
+        ],
+        planos: [
+            { s: 'x', t: 'PLANO TRANSVERSAL (YZ)' },
+            { s: 'y', t: 'PLANO LONGITUDINAL (XZ)' },
+            { s: 'z', t: 'PLANO HORIZONTAL (XY)' },
+            { s: 'x - 2', t: 'PLANO X DESPLAZADO' },
+            { s: 'z + 1.5', t: 'PLANO DE ELEVACIÓN INFERIOR' },
+            { s: 'x + y', t: 'PLANO DIAGONAL BISECTOR XY' },
+            { s: 'x - y', t: 'PLANO DIAGONAL INVERSO XY' },
+            { s: 'x + z', t: 'PLANO INCLINADO LATERAL (45°)' },
+            { s: 'y - z', t: 'PLANO DE INCLINACIÓN FRONTAL' },
+            { s: 'x + y + z', t: 'PLANO OBLICUO ISOMÉTRICO' },
+            { s: 'x + y - 2', t: 'PLANO OBLICUO DESPLAZADO' },
+            { s: '2*x + y + z', t: 'PLANO DE PENDIENTE COMPUESTA' },
+            { s: 'x + 0.5*y - z', t: 'PLANO DE ORIENTACIÓN ESPACIAL' },
+            { s: 'x - z - 2', t: 'PLANO INCLINADO DESPLAZADO' },
+            { s: '0.5*x + 0.5*y + 0.5*z - 1', t: 'PLANO OBLICUO PARAMETRIZADO' }
+        ],
         simbolos: [
-                   { s: '(', t: 'ABRIR (' }, 
-        { s: ')', t: 'CERRAR )' },
-        { s: '+', t: 'SUMA' }, 
-        { s: '-', t: 'RESTA' },
-        { s: '*', t: 'MULT.' }, 
-        { s: '/', t: 'DIV.' },
-        { s: '( )/( )', t: 'FRACCIÓN' }, 
-        { s: '^', t: 'POTENCIA' },
-        { s: 'sqrt()', t: 'RAÍZ (√)' }, 
-        { s: '^(1/ )', t: 'RAÍZ N' },
-        { s: 'x', t: 'VAR X' }, 
-        { s: 'y', t: 'VAR Y' },
-        { s: 'pi', t: 'PI' }, 
-        { s: 'e', t: 'EULER' },
-        { s: 'inf', t: 'INFINITO' }, 
-        { s: '-inf', t: '- INFINITO' },
-        { s: 'abs()', t: 'ABS.' }, 
-        { s: '!', t: 'FACT.' }
+            { s: '(', t: 'ABRIR (' }, { s: ')', t: 'CERRAR )' },
+            { s: '+', t: 'SUMA' }, { s: '-', t: 'RESTA' },
+            { s: '*', t: 'MULT.' }, { s: '/', t: 'DIV.' },
+            { s: '^', t: 'POTENCIA' }, { s: 'sqrt()', t: 'RAÍZ (√)' },
+            { s: 'x', t: 'VAR X' }, { s: 'y', t: 'VAR Y' }, { s: 'z', t: 'VAR Z' },
+            { s: 'abs()', t: 'ABS.' }, { s: 'pi', t: 'PI' }, { s: 'e', t: 'EULER' }
         ]
     };
 
@@ -339,7 +307,6 @@
         btn.classList.add('active');
     }
 
-    // --- MOTOR 3D Y EXPORTACIÓN ---
     const contenedor = document.getElementById('contenedor-grafica');
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
@@ -356,6 +323,37 @@
     let puntosObjeto = null;
     let gridGroup = new THREE.Group();
     scene.add(gridGroup);
+
+    function crearEtiqueta(texto, x, y, z) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 64; canvas.height = 64;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.font = 'bold 40px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(texto, 32, 40);
+        const tex = new THREE.CanvasTexture(canvas);
+        const mat = new THREE.SpriteMaterial({ map: tex });
+        const sprite = new THREE.Sprite(mat);
+        sprite.position.set(x, y, z);
+        sprite.scale.set(0.4, 0.4, 0.4);
+        return sprite;
+    }
+
+    function dibujarEjes(r) {
+        gridGroup.clear();
+        gridGroup.add(new THREE.GridHelper(r * 2, r * 2, 0xeeeeee, 0xf9f9f9));
+        const axes = new THREE.AxesHelper(r + 0.5);
+        gridGroup.add(axes);
+        
+        // Números en los ejes
+        for (let i = -Math.floor(r); i <= Math.floor(r); i++) {
+            if (i === 0) continue;
+            gridGroup.add(crearEtiqueta(i, i, 0.1, 0)); // X
+            gridGroup.add(crearEtiqueta(i, 0, i, 0.1)); // Y (Profundidad en ThreeJS)
+            gridGroup.add(crearEtiqueta(i, 0.1, 0, i)); // Z (Altura en ThreeJS)
+        }
+    }
 
     function generarNubePuntos() {
         if (puntosObjeto) scene.remove(puntosObjeto);
@@ -380,42 +378,26 @@
             geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
             puntosObjeto = new THREE.Points(geo, new THREE.PointsMaterial({ color: col, size: 0.08 }));
             scene.add(puntosObjeto);
-        } catch (e) { alert("Error en ecuación"); }
+        } catch (e) { console.log(e); }
     }
 
-    function dibujarEjes(r) {
-        gridGroup.clear();
-        gridGroup.add(new THREE.GridHelper(r * 2, r * 2, 0xeeeeee, 0xf9f9f9));
-        gridGroup.add(new THREE.AxesHelper(r + 0.5));
-    }
-
-    // EXPORTACIÓN MEJORADA (Alta calidad y marca de agua pequeña)
     function descargarCaptura() {
-        const factorCalidad = 3; // Multiplica la resolución por 3
+        const factorCalidad = 3;
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
-
         canvasExp.width = canvas3d.width * factorCalidad;
         canvasExp.height = canvas3d.height * factorCalidad;
-
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvasExp.width, canvasExp.height);
-        
-        // Renderizar escena a mayor tamaño para la captura
         renderer.setSize(canvasExp.width, canvasExp.height, false);
         renderer.render(scene, camera);
         ctx.drawImage(canvas3d, 0, 0);
-        
-        // Restaurar tamaño original en pantalla
         renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
-
-        // Marca de agua pequeña y elegante
         ctx.font = "bold " + (14 * factorCalidad) + "px 'Playfair Display'";
         ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
         ctx.textAlign = "right";
         ctx.fillText("√(Raiz) Cuadrada²", canvasExp.width - (20 * factorCalidad), canvasExp.height - (20 * factorCalidad));
-
         const link = document.createElement('a');
         link.download = 'Grafica_3D_HQ.png';
         link.href = canvasExp.toDataURL('image/png', 1.0);
