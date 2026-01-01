@@ -60,7 +60,7 @@
 
         #info-box { text-align: center; margin-top: 10px; font-size: 11px; color: #999; font-weight: 600; }
 
-        /* NUEVOS ESTILOS PARA PÍLDORAS Y PLANTILLAS */
+        /* ESTILOS DE PÍLDORAS (IGUAL A LAS IMÁGENES) */
         .pills-nav-container {
             background: #e4e4e4; padding: 6px; border-radius: 40px;
             display: flex; justify-content: space-between; gap: 5px; margin-top: 25px;
@@ -88,22 +88,12 @@
         .sym-card:hover { border-color: #ccc; transform: translateY(-3px); }
         .sym-card span { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block; }
         .sym-card small { font-size: 10px; color: #999; text-transform: uppercase; font-weight: 700; }
-        .sym-card .big-icon { font-size: 24px; margin-bottom: 5px; color: #000; }
 
         .guia-uso-container {
             background: white; border-radius: 25px; padding: 25px; color: #444; line-height: 1.6;
         }
         .guia-uso-container h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-top: 0; color: #000; }
         .guia-uso-container h3 { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 8px; color: #333; }
-        .guia-uso-container p { font-size: 14px; margin-bottom: 15px; }
-
-        @media (max-width: 600px) {
-            .calculadora-moderna { padding: 25px 15px; }
-            #contenedor-grafica { height: 350px; }
-            input, select { font-size: 16px; }
-            .pills-nav-container { overflow-x: auto; padding: 4px; }
-            .pill-btn { padding: 8px 12px; font-size: 10px; }
-        }
     </style>
 </head>
 <body>
@@ -160,78 +150,14 @@
             <button class="pill-btn" onclick="showTab('guia', this)">Guia de uso</button>
         </div>
 
-        <div id="cuadricas" class="tab-content active">
-            <div class="symbols-grid">
-                <div class="sym-card" onclick="cargarEcuacion('x^2 + y^2 + z^2 - 9')">
-                    <span>x^2 + y^2 + z^2 - 9</span>
-                    <small>Esfera</small>
-                </div>
-                <div class="sym-card" onclick="cargarEcuacion('x^2 + y^2 - z')">
-                    <span>x^2 + y^2 - z</span>
-                    <small>Paraboloide</small>
-                </div>
-                <div class="sym-card" onclick="cargarEcuacion('x^2 - y^2 - z')">
-                    <span>x^2 - y^2 - z</span>
-                    <small>Paraboloide Hip.</small>
-                </div>
-                <div class="sym-card" onclick="cargarEcuacion('x^2 + y^2 - z^2')">
-                    <span>x^2 + y^2 - z^2</span>
-                    <small>Cono</small>
-                </div>
-            </div>
-        </div>
-
-        <div id="funciones" class="tab-content">
-            <div class="symbols-grid">
-                <div class="sym-card" onclick="cargarEcuacion('z - 0.5')">
-                    <span>z - 0.5</span>
-                    <small>Plano Horizontal</small>
-                </div>
-                <div class="sym-card" onclick="cargarEcuacion('sin(x) * cos(y) - z')">
-                    <span>sin(x)*cos(y) - z</span>
-                    <small>Ondas</small>
-                </div>
-                <div class="sym-card" onclick="cargarEcuacion('(3 - sqrt(x^2 + y^2))^2 + z^2 - 1')">
-                    <span>(3-sqrt(x^2+y^2))^2+z^2-1</span>
-                    <small>Toroide</small>
-                </div>
-            </div>
-        </div>
-
-        <div id="simbolos" class="tab-content">
-            <div class="symbols-grid">
-                <div class="sym-card" onclick="addSymbol('sqrt()')">
-                    <div class="big-icon">√</div>
-                    <small>Raíz Cuadrada</small>
-                </div>
-                <div class="sym-card" onclick="addSymbol('^2')">
-                    <div class="big-icon">x²</div>
-                    <small>Potencia</small>
-                </div>
-                <div class="sym-card" onclick="addSymbol('sin()')">
-                    <div class="big-icon">sin</div>
-                    <small>Seno</small>
-                </div>
-                <div class="sym-card" onclick="addSymbol('cos()')">
-                    <div class="big-icon">cos</div>
-                    <small>Coseno</small>
-                </div>
-            </div>
-        </div>
-
+        <div id="cuadricas" class="tab-content active"><div class="symbols-grid"></div></div>
+        <div id="funciones" class="tab-content"><div class="symbols-grid"></div></div>
+        <div id="simbolos" class="tab-content"><div class="symbols-grid"></div></div>
         <div id="guia" class="tab-content">
             <div class="guia-uso-container">
                 <h2>Guía de Uso</h2>
-                <p>Bienvenido a la graficadora 3D sólida. Aquí puedes visualizar superficies complejas en un entorno tridimensional interactivo.</p>
-                
-                <h3>¿Cómo graficar?</h3>
-                <p>Escribe tu ecuación igualada a cero. Por ejemplo, para una esfera de radio 3, usa <b>x^2 + y^2 + z^2 - 9</b>. El motor buscará todos los puntos que satisfacen esa condición.</p>
-                
-                <h3>Controles</h3>
-                <p>Usa un dedo o el ratón para <b>rotar</b> la figura. Pellizca o usa la rueda del ratón para hacer <b>zoom</b>. Puedes cambiar el color de la superficie antes de generar el sólido.</p>
-                
-                <h3>Rango y Densidad</h3>
-                <p>El <b>rango</b> define qué tan lejos llega la vista (el tamaño de la caja). La <b>densidad</b> define la precisión: una densidad alta se ve mejor pero requiere un dispositivo más potente.</p>
+                <h3>Cómo graficar</h3>
+                <p>Ingresa ecuaciones igualadas a cero. Usa <b>x, y, z</b> como variables.</p>
             </div>
         </div>
     </div>
@@ -240,45 +166,70 @@
 <canvas id="canvas-export" style="display:none;"></canvas>
 
 <script>
-    // --- LÓGICA DE TABS ---
+    // --- EDITA AQUÍ TUS BOTONES ---
+    // Puedes agregar o quitar elementos siguiendo el formato { s: 'ecuacion', t: 'nombre' }
+    
+    const cuadricas = [
+        { s: 'x^2 + y^2 + z^2 - 9', t: 'ESFERA' }
+    ];
+
+    const funciones = [
+        { s: 'z - sin(x)*cos(y)', t: 'ONDAS' }
+    ];
+
+    const simbolos = [
+        { s: 'sqrt()', t: 'RAÍZ (√)' }
+    ];
+
+    // --- LÓGICA DE RENDERIZADO (NO TOCAR) ---
+    function renderTabs() {
+        renderGrid('cuadricas', cuadricas, true);
+        renderGrid('funciones', funciones, true);
+        renderGrid('simbolos', simbolos, false);
+    }
+
+    function renderGrid(id, data, isAction) {
+        const grid = document.querySelector(`#${id} .symbols-grid`);
+        grid.innerHTML = '';
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'sym-card';
+            card.innerHTML = `<span>${item.s}</span><small>${item.t}</small>`;
+            card.onclick = () => {
+                if(isAction) {
+                    document.getElementById('ecuacion').value = item.s;
+                    generarNubePuntos();
+                } else {
+                    const input = document.getElementById('ecuacion');
+                    input.value += item.s;
+                    input.focus();
+                }
+            };
+            grid.appendChild(card);
+        });
+    }
+
     function showTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-        
         document.getElementById(tabId).classList.add('active');
         btn.classList.add('active');
     }
 
-    function cargarEcuacion(eq) {
-        document.getElementById('ecuacion').value = eq;
-        generarNubePuntos();
-    }
-
-    function addSymbol(sym) {
-        const input = document.getElementById('ecuacion');
-        input.value += sym;
-        input.focus();
-    }
-
-    // --- CÓDIGO ORIGINAL (SIN MODIFICACIONES DE FUNCIONALIDAD) ---
+    // --- MOTOR 3D ORIGINAL (SIN CAMBIOS) ---
     const colorSelect = document.getElementById('colorSurface');
     colorSelect.style.backgroundColor = colorSelect.value;
-
     const contenedor = document.getElementById('contenedor-grafica');
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
-    
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     contenedor.appendChild(renderer.domElement);
-
     const camera = new THREE.PerspectiveCamera(45, contenedor.clientWidth / contenedor.clientHeight, 0.1, 1000);
     camera.position.set(8, 8, 8);
-
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-
     let puntosObjeto = null;
     let gridGroup = new THREE.Group();
     scene.add(gridGroup);
@@ -317,20 +268,16 @@
             puntosObjeto.geometry.dispose();
             puntosObjeto.material.dispose();
         }
-        
         const ecuacionStr = document.getElementById('ecuacion').value;
         const rango = parseFloat(document.getElementById('rango').value);
         const res = parseInt(document.getElementById('resolucion').value);
         const colorHex = document.getElementById('colorSurface').value; 
-
         dibujarEjes(rango);
-
         try {
             const expr = math.compile(ecuacionStr);
             const positions = [];
             const step = (rango * 2) / res;
             const threshold = step * 0.5; 
-
             for (let x = -rango; x <= rango; x += step) {
                 for (let y = -rango; y <= rango; y += step) {
                     for (let z = -rango; z <= rango; z += step) {
@@ -341,10 +288,8 @@
                     }
                 }
             }
-
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
             const material = new THREE.PointsMaterial({ 
                 color: new THREE.Color(colorHex), 
                 size: 0.08, 
@@ -352,10 +297,8 @@
                 transparent: true,
                 opacity: 0.9
             });
-
             puntosObjeto = new THREE.Points(geometry, material);
             scene.add(puntosObjeto);
-
         } catch (e) {
             alert("Error: Revisa la ecuación.");
         }
@@ -365,21 +308,17 @@
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
-
         canvasExp.width = canvas3d.width;
         canvasExp.height = canvas3d.height;
-
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvasExp.width, canvasExp.height);
         ctx.drawImage(canvas3d, 0, 0);
-
         ctx.font = "bold 26px 'Playfair Display'";
         ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
         ctx.textAlign = "right";
         ctx.fillText("√(Raiz) Cuadrada²", canvasExp.width - 40, canvasExp.height - 40);
-
         const link = document.createElement('a');
-        link.download = 'Grafica_Solida_RaizCuadrada.png';
+        link.download = 'Grafica_3D_RaizCuadrada.png';
         link.href = canvasExp.toDataURL('image/png');
         link.click();    
     }
@@ -396,6 +335,7 @@
         renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
     });
 
+    renderTabs();
     generarNubePuntos();
     animate();
 </script>
