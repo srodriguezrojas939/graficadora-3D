@@ -60,10 +60,49 @@
 
         #info-box { text-align: center; margin-top: 10px; font-size: 11px; color: #999; font-weight: 600; }
 
+        /* NUEVOS ESTILOS PARA PÍLDORAS Y PLANTILLAS */
+        .pills-nav-container {
+            background: #e4e4e4; padding: 6px; border-radius: 40px;
+            display: flex; justify-content: space-between; gap: 5px; margin-top: 25px;
+        }
+        .pill-btn {
+            background: transparent; border: none; padding: 10px 15px; border-radius: 30px;
+            font-size: 11px; font-weight: 700; color: #666; cursor: pointer; 
+            transition: 0.3s; flex: 1; white-space: nowrap;
+        }
+        .pill-btn.active { background: white; color: black; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .tab-content { display: none; margin-top: 20px; }
+        .tab-content.active { display: block; }
+
+        .symbols-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px; padding: 5px;
+        }
+        .sym-card {
+            background: white; border-radius: 20px; padding: 20px 10px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+            border: 1px solid transparent; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 100px;
+        }
+        .sym-card:hover { border-color: #ccc; transform: translateY(-3px); }
+        .sym-card span { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block; }
+        .sym-card small { font-size: 10px; color: #999; text-transform: uppercase; font-weight: 700; }
+        .sym-card .big-icon { font-size: 24px; margin-bottom: 5px; color: #000; }
+
+        .guia-uso-container {
+            background: white; border-radius: 25px; padding: 25px; color: #444; line-height: 1.6;
+        }
+        .guia-uso-container h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-top: 0; color: #000; }
+        .guia-uso-container h3 { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 8px; color: #333; }
+        .guia-uso-container p { font-size: 14px; margin-bottom: 15px; }
+
         @media (max-width: 600px) {
             .calculadora-moderna { padding: 25px 15px; }
             #contenedor-grafica { height: 350px; }
             input, select { font-size: 16px; }
+            .pills-nav-container { overflow-x: auto; padding: 4px; }
+            .pill-btn { padding: 8px 12px; font-size: 10px; }
         }
     </style>
 </head>
@@ -113,13 +152,115 @@
 
         <div id="contenedor-grafica"></div>
         <div id="info-box">Ejes: X (Rojo) | Y (Verde) | Z (Azul)</div>
+
+        <div class="pills-nav-container">
+            <button class="pill-btn active" onclick="showTab('cuadricas', this)">Superficies cuadricas</button>
+            <button class="pill-btn" onclick="showTab('funciones', this)">Funciones</button>
+            <button class="pill-btn" onclick="showTab('simbolos', this)">Simbolos</button>
+            <button class="pill-btn" onclick="showTab('guia', this)">Guia de uso</button>
+        </div>
+
+        <div id="cuadricas" class="tab-content active">
+            <div class="symbols-grid">
+                <div class="sym-card" onclick="cargarEcuacion('x^2 + y^2 + z^2 - 9')">
+                    <span>x^2 + y^2 + z^2 - 9</span>
+                    <small>Esfera</small>
+                </div>
+                <div class="sym-card" onclick="cargarEcuacion('x^2 + y^2 - z')">
+                    <span>x^2 + y^2 - z</span>
+                    <small>Paraboloide</small>
+                </div>
+                <div class="sym-card" onclick="cargarEcuacion('x^2 - y^2 - z')">
+                    <span>x^2 - y^2 - z</span>
+                    <small>Paraboloide Hip.</small>
+                </div>
+                <div class="sym-card" onclick="cargarEcuacion('x^2 + y^2 - z^2')">
+                    <span>x^2 + y^2 - z^2</span>
+                    <small>Cono</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="funciones" class="tab-content">
+            <div class="symbols-grid">
+                <div class="sym-card" onclick="cargarEcuacion('z - 0.5')">
+                    <span>z - 0.5</span>
+                    <small>Plano Horizontal</small>
+                </div>
+                <div class="sym-card" onclick="cargarEcuacion('sin(x) * cos(y) - z')">
+                    <span>sin(x)*cos(y) - z</span>
+                    <small>Ondas</small>
+                </div>
+                <div class="sym-card" onclick="cargarEcuacion('(3 - sqrt(x^2 + y^2))^2 + z^2 - 1')">
+                    <span>(3-sqrt(x^2+y^2))^2+z^2-1</span>
+                    <small>Toroide</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="simbolos" class="tab-content">
+            <div class="symbols-grid">
+                <div class="sym-card" onclick="addSymbol('sqrt()')">
+                    <div class="big-icon">√</div>
+                    <small>Raíz Cuadrada</small>
+                </div>
+                <div class="sym-card" onclick="addSymbol('^2')">
+                    <div class="big-icon">x²</div>
+                    <small>Potencia</small>
+                </div>
+                <div class="sym-card" onclick="addSymbol('sin()')">
+                    <div class="big-icon">sin</div>
+                    <small>Seno</small>
+                </div>
+                <div class="sym-card" onclick="addSymbol('cos()')">
+                    <div class="big-icon">cos</div>
+                    <small>Coseno</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="guia" class="tab-content">
+            <div class="guia-uso-container">
+                <h2>Guía de Uso</h2>
+                <p>Bienvenido a la graficadora 3D sólida. Aquí puedes visualizar superficies complejas en un entorno tridimensional interactivo.</p>
+                
+                <h3>¿Cómo graficar?</h3>
+                <p>Escribe tu ecuación igualada a cero. Por ejemplo, para una esfera de radio 3, usa <b>x^2 + y^2 + z^2 - 9</b>. El motor buscará todos los puntos que satisfacen esa condición.</p>
+                
+                <h3>Controles</h3>
+                <p>Usa un dedo o el ratón para <b>rotar</b> la figura. Pellizca o usa la rueda del ratón para hacer <b>zoom</b>. Puedes cambiar el color de la superficie antes de generar el sólido.</p>
+                
+                <h3>Rango y Densidad</h3>
+                <p>El <b>rango</b> define qué tan lejos llega la vista (el tamaño de la caja). La <b>densidad</b> define la precisión: una densidad alta se ve mejor pero requiere un dispositivo más potente.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <canvas id="canvas-export" style="display:none;"></canvas>
 
 <script>
-    // Iniciar color del círculo
+    // --- LÓGICA DE TABS ---
+    function showTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function cargarEcuacion(eq) {
+        document.getElementById('ecuacion').value = eq;
+        generarNubePuntos();
+    }
+
+    function addSymbol(sym) {
+        const input = document.getElementById('ecuacion');
+        input.value += sym;
+        input.focus();
+    }
+
+    // --- CÓDIGO ORIGINAL (SIN MODIFICACIONES DE FUNCIONALIDAD) ---
     const colorSelect = document.getElementById('colorSurface');
     colorSelect.style.backgroundColor = colorSelect.value;
 
@@ -165,13 +306,12 @@
         gridGroup.add(axes);
         for(let i = -r; i <= r; i++) {
             if(i === 0) continue;
-            gridGroup.add(crearEtiqueta(i, i, 0.2, 0)); // X
-            gridGroup.add(crearEtiqueta(i, 0, i, 0.2)); // Z
+            gridGroup.add(crearEtiqueta(i, i, 0.2, 0)); 
+            gridGroup.add(crearEtiqueta(i, 0, i, 0.2)); 
         }
     }
 
     function generarNubePuntos() {
-        // 1. Limpiar objeto anterior
         if (puntosObjeto) {
             scene.remove(puntosObjeto);
             puntosObjeto.geometry.dispose();
@@ -181,7 +321,7 @@
         const ecuacionStr = document.getElementById('ecuacion').value;
         const rango = parseFloat(document.getElementById('rango').value);
         const res = parseInt(document.getElementById('resolucion').value);
-        const colorHex = document.getElementById('colorSurface').value; // Captura el color actual
+        const colorHex = document.getElementById('colorSurface').value; 
 
         dibujarEjes(rango);
 
@@ -205,7 +345,6 @@
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            // TAMAÑO EQUILIBRADO (0.08) Y COLOR FIJO
             const material = new THREE.PointsMaterial({ 
                 color: new THREE.Color(colorHex), 
                 size: 0.08, 
@@ -221,7 +360,8 @@
             alert("Error: Revisa la ecuación.");
         }
     }
-  function descargarCaptura() {
+
+    function descargarCaptura() {
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
