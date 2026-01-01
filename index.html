@@ -135,7 +135,7 @@
             <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
             <button onclick="descargarCaptura()" class="boton-estilo">
                 <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
-                Guardar PNG
+                Guardar PNG de Alta Calidad
             </button>
         </div>
 
@@ -168,70 +168,14 @@
     // --- CONFIGURACIÓN DE BOTONES (Formato s y t) ---
     const dataTabs = {
         cuadricas: [
-            { s: 'x^2 + y^2 + z^2 - 9', t: 'ESFERA' },
-    { s: '(x/3)^2 + (y/2)^2 + (z/1.5)^2 - 1', t: 'ELIPSOIDE' },
-    { s: 'x^2 + y^2 - z^2 - 1', t: 'HIPERBOLOIDE 1 HOJA' },
-    { s: 'z^2 - x^2 - y^2 - 1', t: 'HIPERBOLOIDE 2 HOJAS' },
-    { s: 'x^2 + y^2 - z^2', t: 'CONO ELÍPTICO' },
-    { s: 'x^2 + y^2 - z', t: 'PARABOLOIDE ELÍPTICO' },
-    { s: 'y^2 - x^2 - z', t: 'PARABOLOIDE HIPERBÓLICO' },
-    { s: 'x^2 + y^2 - 4', t: 'CILINDRO ELÍPTICO' },
-    { s: 'x^2 - z^2 - 1', t: 'CILINDRO HIPERBÓLICO' },
-    { s: 'x^2 - z', t: 'CILINDRO PARABÓLICO' }
+            { s: 'x^2 + y^2 + z^2 - 9', t: 'ESFERA' }
         ],
         funciones: [
-            { s: '(3 - sqrt(x^2 + y^2))^2 + z^2 - 1', t: 'Dona' },
-    { s: 'x^4 - 5*x^2 + y^4 - 5*y^2 + z^4 - 5*z^2 + 11.8', t: 'POLINOMIO DE TANGLE' },
-    { s: 'sin(x)*cos(y) + sin(y)*cos(z) + sin(z)*cos(x)', t: 'SUPERFICIE GYROID' },
-    { s: 'z - (x^3 - 3*x*y^2)', t: 'SILLA DE MONO' },
-    { s: 'x^2*y^2 + y^2*z^2 + z^2*x^2 + x*y*z', t: 'SUPERFICIE ROMANA (STEINER)' },
-    { s: '1/(x^2 + y^2 + z^2 + 0.1) + 1/((x-2)^2 + y^2 + z^2 + 0.1) - 1.5', t: 'FUSIÓN DE CAMPOS (METABALLS)' },
-    { s: 'x^4 + y^4 + z^4 - 10', t: 'DADO' },
-    { s: '(x^2 + y^2 + z^2 + 1)^2 - 4*x^2 - 1.5', t: 'ÓVALO DE CASSINI 3D' },
-    { s: 'z - cos(x^2 + y^2) / (x^2 + y^2 + 1)', t: 'MODULACIÓN DE ONDAS RADIALES' },
-    { s: 'cos(x) + cos(y) + cos(z)', t: 'SUPERFICIE DE BANCHOFF-CHMUTOV' },
-    { s: 'abs(x) + abs(y) + abs(z) - 3', t: 'OCTAEDRO TRUNCADO APX.' },
-    { s: 'cos(x)*cos(y)*cos(z) - 0.2', t: 'ESTRUCTURA DE RETÍCULA PERIÓDICA' },
-    { s: 'x^2 + y^2 - cos(z)^2', t: 'SOLENOIDE DE REVOLUCIÓN' },
-    { s: '(x^2 + y^2 - 4)^2 + (z^2 - 1)^2 - 1', t: 'TOROIDE DE SECCIÓN VARIABLE' }
+            { s: 'z - sin(x)*cos(y)', t: 'ONDULADO' }
         ],
         simbolos: [
-                    { s: '(', t: 'ABRIR (' }, 
-        { s: ')', t: 'CERRAR )' },
-        { s: '+', t: 'SUMA' }, 
-        { s: '-', t: 'RESTA' },
-        { s: '*', t: 'MULT.' }, 
-        { s: '/', t: 'DIV.' },
-        { s: '( )/( )', t: 'FRACCIÓN' }, 
-        { s: '^', t: 'POTENCIA' },
-        { s: 'sqrt()', t: 'RAÍZ (√)' }, 
-        { s: '^(1/ )', t: 'RAÍZ N' },
-        { s: 'x', t: 'VAR X' }, 
-        { s: 'y', t: 'VAR Y' },
-        { s: 'pi', t: 'PI' }, 
-        { s: 'e', t: 'EULER' },
-        { s: 'inf', t: 'INFINITO' }, 
-        { s: '-inf', t: '- INFINITO' },
-        { s: 'abs()', t: 'ABS.' }, 
-        { s: '!', t: 'FACT.' }
+            { s: 'sqrt()', t: 'RAÍZ' }
         ]
-        const planos = [
-    { s: 'x', t: 'PLANO TRANSVERSAL (YZ)' },
-    { s: 'y', t: 'PLANO LONGITUDINAL (XZ)' },
-    { s: 'z', t: 'PLANO HORIZONTAL (XY)' },
-    { s: 'x - 2', t: 'PLANO X DESPLAZADO' },
-    { s: 'z + 1.5', t: 'PLANO DE ELEVACIÓN INFERIOR' },
-    { s: 'x + y', t: 'PLANO DIAGONAL BISECTOR XY' },
-    { s: 'x - y', t: 'PLANO DIAGONAL INVERSO XY' },
-    { s: 'x + z', t: 'PLANO INCLINADO LATERAL (45°)' },
-    { s: 'y - z', t: 'PLANO DE INCLINACIÓN FRONTAL' },
-    { s: 'x + y + z', t: 'PLANO OBLICUO ISOMÉTRICO' },
-    { s: 'x + y - 2', t: 'PLANO OBLICUO DESPLAZADO' },
-    { s: '2*x + y + z', t: 'PLANO DE PENDIENTE COMPUESTA' },
-    { s: 'x + 0.5*y - z', t: 'PLANO DE ORIENTACIÓN ESPACIAL' },
-    { s: 'x - z - 2', t: 'PLANO INCLINADO DESPLAZADO' },
-    { s: '0.5*x + 0.5*y + 0.5*z - 1', t: 'PLANO OBLICUO PARAMETRIZADO' }
-];
     };
 
     function renderGrids() {
