@@ -135,7 +135,7 @@
             <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
             <button onclick="descargarCaptura()" class="boton-estilo">
                 <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
-                Guardar PNG de Alta Calidad
+                Guardar PNG
             </button>
         </div>
 
@@ -215,6 +215,23 @@
         { s: 'abs()', t: 'ABS.' }, 
         { s: '!', t: 'FACT.' }
         ]
+        const planos = [
+    { s: 'x', t: 'PLANO TRANSVERSAL (YZ)' },
+    { s: 'y', t: 'PLANO LONGITUDINAL (XZ)' },
+    { s: 'z', t: 'PLANO HORIZONTAL (XY)' },
+    { s: 'x - 2', t: 'PLANO X DESPLAZADO' },
+    { s: 'z + 1.5', t: 'PLANO DE ELEVACIÓN INFERIOR' },
+    { s: 'x + y', t: 'PLANO DIAGONAL BISECTOR XY' },
+    { s: 'x - y', t: 'PLANO DIAGONAL INVERSO XY' },
+    { s: 'x + z', t: 'PLANO INCLINADO LATERAL (45°)' },
+    { s: 'y - z', t: 'PLANO DE INCLINACIÓN FRONTAL' },
+    { s: 'x + y + z', t: 'PLANO OBLICUO ISOMÉTRICO' },
+    { s: 'x + y - 2', t: 'PLANO OBLICUO DESPLAZADO' },
+    { s: '2*x + y + z', t: 'PLANO DE PENDIENTE COMPUESTA' },
+    { s: 'x + 0.5*y - z', t: 'PLANO DE ORIENTACIÓN ESPACIAL' },
+    { s: 'x - z - 2', t: 'PLANO INCLINADO DESPLAZADO' },
+    { s: '0.5*x + 0.5*y + 0.5*z - 1', t: 'PLANO OBLICUO PARAMETRIZADO' }
+];
     };
 
     function renderGrids() {
