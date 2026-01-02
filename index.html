@@ -3,196 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Graficadora 3D Estable</title>
+    <title>Graficadora 3D Pro - Raíz Cuadrada</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap');
 
-        body { background: #fdfdfd; font-family: 'Open Sans', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
-        .container { max-width: 600px; width: 100%; background: #F2F2F2; border-radius: 30px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); box-sizing: border-box; }
-        
-        h1 { font-family: 'Playfair Display', serif; text-align: center; margin: 0 0 15px 0; font-size: 24px; }
-        
-        .input-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid #eee; }
-        label { display: block; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        input, select { width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; }
-        
-        .btn-main { background: #000; color: #fff; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
-        .btn-sec { background: #fff; color: #000; border: 1px solid #ccc; padding: 12px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s ease forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-        #contenedor-canvas { 
-            width: 100%; height: 350px; background: #fff; border-radius: 20px; 
-            margin-top: 15px; position: relative; overflow: hidden; border: 1px solid #eee;
+        body { background: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; box-sizing: border-box; font-family: 'Open Sans', sans-serif; }
+
+        .calculadora-moderna {
+            max-width: 700px; width: 100%; padding: 35px 25px;
+            background: #F2F2F2; border-radius: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            box-sizing: border-box;
         }
 
-        #loading {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); display: none; align-items: center;
-            justify-content: center; font-weight: 700; color: #000; z-index: 10;
+        .header-section { text-align: center; margin-bottom: 20px; }
+        .header-section h1 { font-size: 28px; margin: 0; font-family: 'Playfair Display', serif; }
+        .header-section p { font-size: 16px; font-weight: 600; color: #444; margin: 5px 0; font-family: 'Playfair Display', serif;}
+
+        label { display: block; font-size: 10px; margin-bottom: 6px; margin-left: 12px; font-weight: 700; text-transform: uppercase; color: #666; letter-spacing: 0.5px; }
+
+        .input-group { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+
+        input[type="text"], input[type="number"], select {
+            font-size: 14px; padding: 12px 18px; border: 1px solid #ddd; border-radius: 25px;
+            background: white; width: 100%; box-sizing: border-box; outline: none;
         }
 
-        .ejes-info { text-align: center; font-size: 10px; color: #999; margin-top: 8px; font-weight: 600; }
+        .color-picker-container {
+            width: 48px; height: 48px; flex-shrink: 0; position: relative;
+            border-radius: 12px; overflow: hidden; border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        input[type="color"] {
+            position: absolute; top: -10px; left: -10px; width: 80px; height: 80px;
+            cursor: pointer; border: none; padding: 0; background: none;
+        }
+
+        .botones-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .boton-estilo {
+            display: flex; align-items: center; justify-content: center;
+            background: white; border: 1px solid #ccc; border-radius: 30px;
+            padding: 14px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.2s;
+            color: black; text-decoration: none;
+        }
+        .boton-principal { background: black; color: white; border: none; }
         
-        /* Pestañas inferiores */
-        .tabs { display: flex; gap: 5px; overflow-x: auto; margin-top: 20px; padding-bottom: 5px; }
-        .tab-btn { background: #e0e0e0; border: none; padding: 8px 15px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; }
-        .tab-btn.active { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #contenedor-grafica {
+            margin-top: 20px; background: white; border-radius: 25px;
+            height: 400px; border: 1px solid #eee; overflow: hidden; position: relative;
+        }
+
+        #info-box { text-align: center; margin-top: 10px; font-size: 11px; color: #999; font-weight: 600; }
+
+        .pills-nav-container {
+            background: #e4e4e4; padding: 6px; border-radius: 40px;
+            display: flex; justify-content: space-between; gap: 3px; margin-top: 25px;
+            overflow-x: auto;
+        }
+        .pill-btn {
+            background: transparent; border: none; padding: 10px 8px; border-radius: 30px;
+            font-size: 9px; font-weight: 700; color: #666; cursor: pointer; 
+            transition: 0.3s; flex: 1; white-space: nowrap; text-transform: none;
+        }
+        .pill-btn.active { background: white; color: black; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .tab-content { display: none; margin-top: 20px; }
+        .tab-content.active { display: block; }
+
+        .symbols-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px; padding: 5px;
+        }
+        .sym-card {
+            background: white; border-radius: 22px; padding: 18px 10px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+            border: 1px solid transparent; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 90px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .sym-card:hover { transform: translateY(-3px); border-color: #ddd; }
+        .sym-card span { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: #000; word-break: break-all; }
+        .sym-card small { font-size: 9px; color: #999; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; }
+
+        .guia-uso-container { background: white; border-radius: 25px; padding: 25px; color: #444; }
+        .guia-uso-container h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-top: 0; color: #000; }
+        .guia-uso-container h3 { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 8px; color: #333; }
+
+        .guia-scroll { max-height: 500px; overflow-y: auto; padding-right: 15px; }
+        .guia-scroll::-webkit-scrollbar { width: 6px; }
+        .guia-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+        .code-box { background: #f9f9f9; border-left: 4px solid #000; padding: 10px; font-family: monospace; font-size: 13px; margin: 10px 0; border-radius: 4px; }
+        .nota-autor { margin-top: 30px; padding: 20px; background: #eee; border-radius: 20px; font-style: italic; font-size: 13px; }
+        .eje-color { font-weight: bold; }
+        .red { color: #e74c3c; }
+        .green { color: #2ecc71; }
+        .blue { color: #3498db; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Graficadora 3D</h1>
+<div class="fade-in" style="width: 100%; display: flex; justify-content: center;">
+    <div class="calculadora-moderna">
+        <div class="header-section">
+            <h1>Graficadora 3D</h1>
+            <p>√(Raiz) Cuadrada²</p>
+        </div>
 
-    <div class="input-box">
-        <label>Ecuación f(x,y,z) = 0</label>
-        <input id="ecuacion" type="text" value="x^2 + y^2 + z^2 - 9">
-        
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <label>Ecuación f(x, y, z) = 0</label>
+        <div class="input-group">
+            <input id="ecuacion" type="text" placeholder="Escribe aquí..." value="(3 - sqrt(x^2 + y^2))^2 + z^2 - 1">
+            <div class="color-picker-container">
+                <input type="color" id="colorSurface" value="#3498db">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <div style="flex: 1;">
                 <label>Rango</label>
-                <input id="rango" type="number" value="4">
+                <input type="number" id="rango" value="4">
             </div>
             <div style="flex: 1;">
-                <label>Puntos</label>
-                <select id="densidad">
-                    <option value="40">Rápido</option>
-                    <option value="70" selected>Normal</option>
-                    <option value="100">Máximo (Ultra)</option>
+                <label>Densidad</label>
+                <select id="resolucion">
+                    <option value="60">Baja</option>
+                    <option value="90" selected>Normal</option>
+                    <option value="120">Alta</option>
+                    <option value="150">Ultra (Cuidado)</option>
                 </select>
             </div>
         </div>
-    </div>
 
-    <button class="btn-main" onclick="iniciarGeneracion()">Generar Sólido</button>
-    <button class="btn-sec" onclick="descargarPNG()">
-        <span style="font-size: 18px;">💾</span> Guardar Imagen
-    </button>
+        <div class="botones-container">
+            <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
+            <button onclick="menuDescarga()" class="boton-estilo">
+                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
+                Guardar Imagen (Captura)
+            </button>
+        </div>
 
-    <div id="contenedor-canvas">
-        <div id="loading">Calculando puntos...</div>
-    </div>
-    <div class="ejes-info">X: Rojo | Y: Verde | Z: Azul (Altura)</div>
+        <div id="contenedor-grafica"></div>
+        <div id="info-box">Ejes: X (Rojo) | Y (Verde) | Z (Azul - Altura)</div>
 
-    <div class="tabs">
-        <button class="tab-btn active">Cuádricas</button>
-        <button class="tab-btn">Funciones</button>
-        <button class="tab-btn">Planos</button>
-        <button class="tab-btn">Guía</button>
+        <div class="pills-nav-container">
+            <button class="pill-btn active" onclick="showTab('cuadricas', this)">Cuadricas</button>
+            <button class="pill-btn" onclick="showTab('funciones', this)">Funciones</button>
+            <button class="pill-btn" onclick="showTab('planos', this)">Planos</button>
+            <button class="pill-btn" onclick="showTab('simbolos', this)">Simbolos</button>
+            <button class="pill-btn" onclick="showTab('guia', this)">Guia de uso</button>
+        </div>
+
+        <div id="cuadricas" class="tab-content active"><div class="symbols-grid"></div></div>
+        <div id="funciones" class="tab-content"><div class="symbols-grid"></div></div>
+        <div id="planos" class="tab-content"><div class="symbols-grid"></div></div>
+        <div id="simbolos" class="tab-content"><div class="symbols-grid"></div></div>
+        
+        <div id="guia" class="tab-content">
+            <div class="guia-uso-container guia-scroll">
+                <h2>Manual de Usuario</h2>
+                <hr>
+                <h3>1. Todo debe ser igual a cero</h3>
+                <p>Para que funcione, tienes que pasar todos los términos a un solo lado de la ecuación.</p>
+                <div class="code-box">
+                    <b>Mal:</b> z = x^2 + y^2 <br>
+                    <b>Bien:</b> x^2 + y^2 - z
+                </div>
+                <p><small>Ejemplo Esfera: No escribas x^2 + y^2 + z^2 = 9, escribe <b>x^2 + y^2 + z^2 - 9</b></small></p>
+
+                <h3>2. Sintaxis matemática</h3>
+                <p>El motor usa la lógica de <b>Math.js</b>. Sé explícito con los símbolos:</p>
+                <ul>
+                    <li><b>Potencias:</b> Usa el "sombrerito" <b>^</b>. Ej: x^2, y^3.</li>
+                    <li><b>Multiplicación:</b> Es mejor usar el asterisco: <b>2 * x</b>.</li>
+                    <li><b>Paréntesis:</b> Úsalos para agrupar fracciones. Ej: (x + y) / (z + 1).</li>
+                    <li><b>Funciones:</b> Puedes usar sin(), cos(), tan(), sqrt(), abs() y exp().</li>
+                </ul>
+
+                <h3>3. Errores comunes</h3>
+                <p><b>Variables:</b> Solo usa <b>x, y, z</b> en minúsculas. Letras como "a" o "b" darán error.</p>
+                <p><b>El símbolo "=":</b> El cuadro de texto ya asume el "= 0". Por favor, despeja la ecuación.</p>
+                <p><b>Rango:</b> Si tu figura es grande pero el rango es pequeño (ej. 5), no verás nada. Ajusta el rango según tu ecuación.</p>
+
+                <h3>4. Tips de visualización</h3>
+                <p>Te recomiendo utilizar la <b>calidad más alta</b> e ir jugando con el rango. Empieza desde 1 y súbelo gradualmente.</p>
+                <p><b>Superficies Infinitas:</b> Si graficas un plano, verás que se corta como un cuadrado. Es normal, es el límite del cubo de análisis (el Rango).</p>
+
+                <h3>5. Guía de Colores de los Ejes</h3>
+                <p>Para no perderte en el espacio al rotar:</p>
+                <p>🔴 <span class="eje-color red">Rojo:</span> Eje "X" (Lado a Lado)</p>
+                <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y" (Lado a Lado)</p>
+                <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura / Tradicional)</p>
+
+                <h3>6. Capturas de pantalla</h3>
+                <p>Al presionar <b>Guardar Imagen</b>, podrás elegir la calidad. En celulares se recomienda calidad normal para evitar errores de memoria.</p>
+
+                <div class="nota-autor">
+                    <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida. Ten en cuenta esta guía y prueba copiando las funciones que te dejé para entender lo fascinante que es el espacio 3D.
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<canvas id="canvas-export" style="display:none;"></canvas>
+
 <script>
-    let escena, camara, render, controles, puntosObjeto, ejesGrupo;
-    const contenedor = document.getElementById('contenedor-canvas');
-    const loading = document.getElementById('loading');
+    const dataTabs = {
+        cuadricas: [
+            { s: 'x^2 + y^2 + z^2 - 9', t: 'ESFERA' },
+            { s: '(x/3)^2 + (y/2)^2 + (z/1.5)^2 - 1', t: 'ELIPSOIDE' },
+            { s: 'x^2 + y^2 - z^2 - 1', t: 'HIPERBOLOIDE 1 HOJA' },
+            { s: 'z^2 - x^2 - y^2 - 1', t: 'HIPERBOLOIDE 2 HOJAS' },
+            { s: 'x^2 + y^2 - z^2', t: 'CONO ELÍPTICO' },
+            { s: 'x^2 + y^2 - z', t: 'PARABOLOIDE ELÍPTICO' },
+            { s: 'y^2 - x^2 - z', t: 'PARABOLOIDE HIPERBÓLICO' },
+            { s: 'x^2 + y^2 - 4', t: 'CILINDRO ELÍPTICO' },
+            { s: 'x^2 - z^2 - 1', t: 'CILINDRO HIPERBÓLICO' },
+            { s: 'x^2 - z', t: 'CILINDRO PARABÓLICO' }
+        ],
+        funciones: [
+            { s: 'z - sin(x)*cos(y)', t: 'ONDULADO' },
+            { s: '(3 - sqrt(x^2 + y^2))^2 + z^2 - 1', t: 'TOROIDE (DONA)' },
+            { s: '(x^2 + (9/4)y^2 + z^2 - 1)^3 - x^2*z^3 - (9/80)*y^2*z^3', t: 'CORAZÓN 3D' },
+            { s: 'z - sin(sqrt(x^2 + y^2))', t: 'GOTA EN AGUA' },
+            { s: 'x^4 - 5*x^2 + y^4 - 5*y^2 + z^4 - 5*z^2 + 11.8', t: 'TANGLE CUBE' },
+            { s: 'z - (x^3 - 3*x*y^2)', t: 'SILLA DE MONO' },
+            { s: 'z - cos(x) - cos(y)', t: 'CARTÓN DE HUEVOS' },
+            { s: 'x^4 + y^4 + z^4 - 6', t: 'COJÍN GEOMÉTRICO' },
+            { s: '1/(x^2 + y^2 + z^2) + 1/((x-2.5)^2 + y^2 + z^2) - 1', t: 'FUSIÓN (METABALLS)' },
+            { s: 'x^8 + y^8 + z^8 - 12', t: 'SÚPER-ESFERA' },
+            { s: 'sin(x) + sin(y) + sin(z)', t: 'GYROID APX.' }
+        ],
+        planos: [
+            { s: 'x', t: 'PLANO TRANSVERSAL (YZ)' },
+            { s: 'y', t: 'PLANO LONGITUDINAL (XZ)' },
+            { s: 'z', t: 'PLANO HORIZONTAL (XY)' },
+            { s: 'x - 2', t: 'PLANO X DESPLAZADO' },
+            { s: 'z + 1.5', t: 'PLANO DE ELEVACIÓN INFERIOR' },
+            { s: 'x + y', t: 'PLANO DIAGONAL BISECTOR XY' },
+            { s: 'x - y', t: 'PLANO DIAGONAL INVERSO XY' },
+            { s: 'x + z', t: 'PLANO INCLINADO LATERAL (45°)' },
+            { s: 'y - z', t: 'PLANO DE INCLINACIÓN FRONTAL' },
+            { s: 'x + y + z', t: 'PLANO OBLICUO ISOMÉTRICO' },
+            { s: 'x + y - 2', t: 'PLANO OBLICUO DESPLAZADO' },
+            { s: '2*x + y + z', t: 'PLANO DE PENDIENTE COMPUESTA' },
+            { s: 'x + 0.5*y - z', t: 'PLANO DE ORIENTACIÓN ESPACIAL' },
+            { s: 'x - z - 2', t: 'PLANO INCLINADO DESPLAZADO' },
+            { s: '0.5*x + 0.5*y + 0.5*z - 1', t: 'PLANO OBLICUO PARAMETRIZADO' }
+        ],
+        simbolos: [
+            { s: '(', t: 'ABRIR (' }, { s: ')', t: 'CERRAR )' },
+            { s: '+', t: 'SUMA' }, { s: '-', t: 'RESTA' },
+            { s: '*', t: 'MULT.' }, { s: '/', t: 'DIV.' },
+            { s: '^', t: 'POTENCIA' }, { s: 'sqrt()', t: 'RAÍZ (√)' },
+            { s: 'x', t: 'VAR X' }, { s: 'y', t: 'VAR Y' }, { s: 'z', t: 'VAR Z' },
+            { s: 'abs()', t: 'ABS.' }, { s: 'pi', t: 'PI' }, { s: 'e', t: 'EULER' }
+        ]
+    };
 
-    // Inicializar Escena
-    function init() {
-        escena = new THREE.Scene();
-        escena.background = new THREE.Color(0xffffff);
+    function renderGrids() {
+        for (const [id, items] of Object.entries(dataTabs)) {
+            const grid = document.querySelector(`#${id} .symbols-grid`);
+            if (!grid) continue;
+            grid.innerHTML = items.map(item => `
+                <div class="sym-card" onclick="handleCardClick('${item.s}', '${id}')">
+                    <span>${item.s}</span>
+                    <small>${item.t}</small>
+                </div>
+            `).join('');
+        }
+    }
 
-        camara = new THREE.PerspectiveCamera(45, contenedor.clientWidth / contenedor.clientHeight, 0.1, 1000);
-        camara.position.set(7, 7, 7);
-        camara.up.set(0, 0, 1); // Z hacia arriba
+    function handleCardClick(val, id) {
+        const input = document.getElementById('ecuacion');
+        if (id === 'simbolos') {
+            input.value += val;
+        } else {
+            input.value = val;
+            generarNubePuntos();
+        }
+        input.focus();
+    }
 
-        render = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-        render.setPixelRatio(window.devicePixelRatio);
-        render.setSize(contenedor.clientWidth, contenedor.clientHeight);
-        contenedor.appendChild(render.domElement);
+    function showTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
 
-        controles = new THREE.OrbitControls(camara, render.domElement);
-        controles.enableDamping = true;
+    const contenedor = document.getElementById('contenedor-grafica');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    contenedor.appendChild(renderer.domElement);
 
-        ejesGrupo = new THREE.Group();
-        escena.add(ejesGrupo);
+    // AJUSTE TRADICIONAL: Z HACIA ARRIBA
+    const camera = new THREE.PerspectiveCamera(45, contenedor.clientWidth / contenedor.clientHeight, 0.1, 1000);
+    camera.position.set(8, 8, 8);
+    camera.up.set(0, 0, 1); // Definir Z como el eje vertical
 
-        animate();
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    let puntosObjeto = null;
+    let gridGroup = new THREE.Group();
+    scene.add(gridGroup);
+
+    function crearEtiqueta(texto, x, y, z) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 64; canvas.height = 64;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.font = 'bold 40px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(texto, 32, 40);
+        const tex = new THREE.CanvasTexture(canvas);
+        const mat = new THREE.SpriteMaterial({ map: tex });
+        const sprite = new THREE.Sprite(mat);
+        sprite.position.set(x, y, z);
+        sprite.scale.set(0.4, 0.4, 0.4);
+        return sprite;
     }
 
     function dibujarEjes(r) {
-        ejesGrupo.clear();
-        // Grilla en el piso (XY)
-        const grid = new THREE.GridHelper(r * 2, r * 2, 0xcccccc, 0xeeeeee);
+        gridGroup.clear();
+        // Grilla acostada en el plano XY
+        const grid = new THREE.GridHelper(r * 2, r * 2, 0xeeeeee, 0xf9f9f9);
         grid.rotation.x = Math.PI / 2;
-        ejesGrupo.add(grid);
-        // Ejes
-        const axes = new THREE.AxesHelper(r + 1);
-        ejesGrupo.add(axes);
-    }
-
-    function iniciarGeneracion() {
-        loading.style.display = 'flex';
-        // Usar un pequeño delay para que el navegador muestre el "Cargando" antes de procesar
-        setTimeout(generarGrafica, 100);
-    }
-
-    function generarGrafica() {
-        if (puntosObjeto) escena.remove(puntosObjeto);
+        gridGroup.add(grid);
         
-        const eqStr = document.getElementById('ecuacion').value;
+        const axes = new THREE.AxesHelper(r + 0.5);
+        gridGroup.add(axes);
+        
+        for (let i = -Math.floor(r); i <= Math.floor(r); i++) {
+            if (i === 0) continue;
+            gridGroup.add(crearEtiqueta(i, i, 0, 0.1)); // X
+            gridGroup.add(crearEtiqueta(i, 0, i, 0.1)); // Y
+            gridGroup.add(crearEtiqueta(i, 0.1, 0, i)); // Z (Altura)
+        }
+    }
+
+    function generarNubePuntos() {
+        if (puntosObjeto) scene.remove(puntosObjeto);
+        const eq = document.getElementById('ecuacion').value;
         const r = parseFloat(document.getElementById('rango').value);
-        const res = parseInt(document.getElementById('densidad').value);
+        const res = parseInt(document.getElementById('resolucion').value);
+        const col = document.getElementById('colorSurface').value;
 
         dibujarEjes(r);
-
         try {
-            const expr = math.compile(eqStr);
-            const vertices = [];
-            const paso = (r * 2) / res;
-            const umbral = paso * 0.7;
-
-            for (let x = -r; x <= r; x += paso) {
-                for (let y = -r; y <= r; y += paso) {
-                    for (let z = -r; z <= r; z += paso) {
-                        const v = expr.evaluate({x, y, z});
-                        if (Math.abs(v) < umbral) {
-                            vertices.push(x, y, z);
-                        }
+            const expr = math.compile(eq);
+            const pos = [];
+            const step = (r * 2) / res;
+            for (let x = -r; x <= r; x += step) {
+                for (let y = -r; y <= r; y += step) {
+                    for (let z = -r; z <= r; z += step) {
+                        const val = expr.evaluate({x, y, z});
+                        // Umbral ajustado dinámicamente para mayor precisión visual
+                        if (Math.abs(val) < step * 0.6) pos.push(x, y, z);
                     }
                 }
             }
-
             const geo = new THREE.BufferGeometry();
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const mat = new THREE.PointsMaterial({ color: 0x3498db, size: 0.05 });
-            puntosObjeto = new THREE.Points(geo, mat);
-            escena.add(puntosObjeto);
-
-        } catch (err) {
-            alert("Error en la ecuación: " + err.message);
-        }
-
-        loading.style.display = 'none';
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            // Punto ligeramente más pequeño para permitir mayor densidad sin empastarse
+            puntosObjeto = new THREE.Points(geo, new THREE.PointsMaterial({ color: col, size: 0.05 }));
+            scene.add(puntosObjeto);
+        } catch (e) { console.log(e); }
     }
 
-    function descargarPNG() {
-        render.render(escena, camara);
+    function menuDescarga() {
+        const opc = prompt("Elige la calidad de descarga:\n1: Baja (Rápida)\n2: Media (Recomendada)\n3: Alta (Puede fallar en celulares)", "2");
+        if (opc === "1") descargarCaptura(1);
+        else if (opc === "2") descargarCaptura(2);
+        else if (opc === "3") descargarCaptura(3);
+    }
+
+    function descargarCaptura(factor) {
+        // Para evitar recortes en celulares, guardamos la configuración original
+        const originalWidth = contenedor.clientWidth;
+        const originalHeight = contenedor.clientHeight;
+        const aspect = originalWidth / originalHeight;
+
+        // Crear un canvas de exportación interno para no afectar la vista previa
+        const canvasExp = document.getElementById('canvas-export');
+        const ctx = canvasExp.getContext('2d');
+        
+        const exportWidth = originalWidth * factor;
+        const exportHeight = originalHeight * factor;
+
+        canvasExp.width = exportWidth;
+        canvasExp.height = exportHeight;
+
+        // Renderizar a la resolución deseada temporalmente
+        renderer.setSize(exportWidth, exportHeight, false);
+        renderer.render(scene, camera);
+
+        // Copiar al canvas de exportación
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, exportWidth, exportHeight);
+        ctx.drawImage(renderer.domElement, 0, 0);
+
+        // Volver a la normalidad inmediatamente
+        renderer.setSize(originalWidth, originalHeight);
+        
+        // Firma opcional
+        ctx.font = "bold " + (12 * factor) + "px 'Open Sans'";
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.textAlign = "right";
+        ctx.fillText("Generado con Graficadora 3D", exportWidth - (15 * factor), exportHeight - (15 * factor));
+
         const link = document.createElement('a');
-        link.download = 'mi_grafica_3d.png';
-        link.href = render.domElement.toDataURL('image/png');
+        link.download = 'Captura_3D_Calidad_' + factor + '.png';
+        link.href = canvasExp.toDataURL('image/png', 1.0);
         link.click();
     }
 
-    function animate() {
-        requestAnimationFrame(animate);
-        controles.update();
-        render.render(escena, camara);
-    }
-
+    function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+    
     window.addEventListener('resize', () => {
-        camara.aspect = contenedor.clientWidth / contenedor.clientHeight;
-        camara.updateProjectionMatrix();
-        render.setSize(contenedor.clientWidth, contenedor.clientHeight);
+        camera.aspect = contenedor.clientWidth / contenedor.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(contenedor.clientWidth, contenedor.clientHeight);
     });
 
-    init();
-    generarGrafica();
+    renderGrids();
+    generarNubePuntos();
+    animate();
 </script>
-
 </body>
 </html>
