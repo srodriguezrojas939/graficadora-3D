@@ -177,14 +177,60 @@
         <div id="planos" class="tab-content"><div class="symbols-grid"></div></div>
         <div id="simbolos" class="tab-content"><div class="symbols-grid"></div></div>
         
-        <div id="guia" class="tab-content">
-            <div class="guia-uso-container">
-                <h2>Guía de uso</h2>
-                <p>Para <b>implícitas</b>: Despeja a cero (ej: x^2 + y^2 - 9). <br>
-                Para <b>paramétricas</b>: Usa u y v separados por barras (ej: u*cos(v) | u*sin(v) | v). <br>
-                Cambia entre <b>Puntos</b> para ver la densidad o <b>Malla</b> para un acabado sólido.</p>
-            </div>
+      <div id="guia" class="tab-content">
+    <div class="guia-uso-container guia-scroll">
+        <h2>Manual de Usuario</h2>
+        <hr>
+
+        <h3>1. Todo debe ser igual a cero</h3>
+        <p>Para que funcione, tienes que pasar todos los términos a un solo lado de la ecuación.</p>
+        <div class="code-box">
+            <b>Mal:</b> z = x^2 + y^2 <br>
+            <b>Bien:</b> x^2 + y^2 - z
         </div>
+        <p><small>Ejemplo Esfera: No escribas x^2 + y^2 + z^2 = 9, escribe <b>x^2 + y^2 + z^2 - 9</b></small></p>
+
+        <h3>2. Sintaxis matemática</h3>
+        <p>El motor usa la lógica de <b>Math.js</b>. Sé explícito con los símbolos:</p>
+        <ul>
+            <li><b>Potencias:</b> Usa el "sombrerito" <b>^</b>. Ej: x^2, y^3.</li>
+            <li><b>Multiplicación:</b> Es mejor usar el asterisco: <b>2 * x</b>.</li>
+            <li><b>Paréntesis:</b> Úsalos para agrupar fracciones. Ej: (x + y) / (z + 1).</li>
+            <li><b>Funciones:</b> Puedes usar sin(), cos(), tan(), sqrt(), abs() y exp().</li>
+        </ul>
+
+        <h3>3. Errores comunes</h3>
+        <p><b>Variables:</b> Solo usa <b>x, y, z</b> en minúsculas. Letras como "a" o "b" darán error.</p>
+        <p><b>El símbolo "=":</b> El cuadro de texto ya asume el "= 0". Por favor, despeja la ecuación.</p>
+        <p><b>Rango:</b> Si tu figura es grande pero el rango es pequeño (ej. 5), no verás nada. Ajusta el rango según tu ecuación.</p>
+
+        <h3>4. Tips de visualización</h3>
+        <p>Te recomiendo utilizar la <b>densidad mas alta</b> e ir jugando con el rango. Empieza desde 1 y súbelo gradualmente.</p>
+        <p><b>Superficies Infinitas:</b> Si graficas un plano, verás que se corta como un cuadrado. Es normal, es el límite del cubo de análisis (el Rango).</p>
+<p><b>Parametricas:</b> Si utilizas una parametrica te recomiendo cambiar al </b> modo malla</b>  si estas con funciones te recomiendo usar el </b> modo puntos</b> </p>
+
+        <h3>5. Guía de Colores de los Ejes</h3>
+        <p>Para no perderte en el espacio al rotar:</p>
+        <p>🔴 <span class="eje-color red">Rojo:</span> Eje "X" (Izquierda / Derecha)</p>
+        <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y" (Profundidad)</p>
+        <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura / Arriba-Abajo)</p>
+
+        <h3>6. Capturas de pantalla</h3>
+        <p>Antes de usar <b>"Descargar PNG"</b>, acomoda la cámara:</p>
+        <ul>
+            <li><b>Click Izquierdo:</b> Rotar para buscar el mejor ángulo.</li>
+            <li><b>Scroll (Rueda):</b> Acercarte o alejarte (Zoom).</li>
+            <li><b>Click Derecho:</b> Centrar la figura si se movió.</li>
+        </ul>
+
+        <h3>7. Botón de Generar Sólido</h3>
+        <p><b>¡Importante!</b> Cada vez que hagas una modificación en la ecuación, rango o densidad, debes dar click en el botón negro de <b>Generar Sólido</b>.</p>
+
+        <div class="nota-autor">
+            <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida. Ten en cuenta esta guía y prueba copiando las funciones que te dejé para entender lo no tan complejo que es el espacio.
+        </div>
+    </div>
+</div>
     </div>
 </div>
 
@@ -215,7 +261,6 @@
             { s: 'sin(x) + sin(y) + sin(z)', t: 'GYROID APX.' }
                    ],
         parametricas: [
-            { s: 'u*cos(v) | u*sin(v) | v', t: 'HELICOIDE' },
             { s: 'u*cos(v) | u*sin(v) | v', t: 'HELICOIDE' },
             { s: '(3+cos(v))*cos(u) | (3+cos(v))*sin(u) | sin(v)', t: 'TOROIDE (DONA)' },
             { s: '3*cos(u)*sin(v) | 3*sin(u)*sin(v) | 3*cos(v)', t: 'ESFERA PARAMÉTRICA' },
