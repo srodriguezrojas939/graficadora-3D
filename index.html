@@ -56,42 +56,35 @@
         }
         .boton-principal { background: black; color: white; border: none; }
         
-        /* Contenedor de descarga mejorado */
+        /* Contenedor de descarga modificado para desplegable */
         .descarga-seccion {
             background: #e9e9e9;
             border-radius: 30px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border: 1px solid #ddd;
-        }
-        .descarga-header {
+            padding: 12px 18px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #555;
-            padding: 5px 0;
+            gap: 10px;
+            border: 1px solid #ddd;
         }
-        .calidad-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-        .btn-calidad {
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            padding: 8px 5px;
-            font-size: 10px;
+        .descarga-label {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
             font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
+            color: #333;
+            white-space: nowrap;
         }
-        .btn-calidad:hover { background: #f0f0f0; transform: translateY(-1px); }
+        .select-calidad {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+            outline: none;
+        }
 
         #contenedor-grafica {
             margin-top: 20px; background: white; border-radius: 25px;
@@ -139,7 +132,6 @@
         .guia-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 
         .code-box { background: #f9f9f9; border-left: 4px solid #000; padding: 10px; font-family: monospace; font-size: 13px; margin: 10px 0; border-radius: 4px; }
-        .nota-autor { margin-top: 30px; padding: 20px; background: #eee; border-radius: 20px; font-style: italic; font-size: 13px; }
         .eje-color { font-weight: bold; }
         .red { color: #e74c3c; }
         .green { color: #2ecc71; }
@@ -183,15 +175,16 @@
             <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
             
             <div class="descarga-seccion">
-                <div class="descarga-header">
-                    <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="14" style="margin-right:8px"> 
-                    Descargar PNG
+                <div class="descarga-label">
+                    <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
+                    Descargar PNG:
                 </div>
-                <div class="calidad-grid">
-                    <button class="btn-calidad" onclick="descargarCaptura(1)">Calidad baja</button>
-                    <button class="btn-calidad" onclick="descargarCaptura(2)">Calidad media</button>
-                    <button class="btn-calidad" onclick="descargarCaptura(3.5)">Calidad alta</button>
-                </div>
+                <select id="calidadSelect" class="select-calidad" onchange="descargarCaptura()">
+                    <option value="" disabled selected>Seleccionar calidad...</option>
+                    <option value="1">Calidad baja (Rápida)</option>
+                    <option value="2">Calidad media (Recomendada)</option>
+                    <option value="3.5">Calidad alta (Lenta)</option>
+                </select>
             </div>
         </div>
 
@@ -247,10 +240,7 @@
                 <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y"</p>
                 <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura)</p>
 
-                <div class="nota-autor">
-                    <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida.
                 </div>
-            </div>
         </div>
     </div>
 </div>
@@ -421,16 +411,20 @@
         } catch (e) { console.log(e); }
     }
 
-    function descargarCaptura(factor) {
+    function descargarCaptura() {
+        const select = document.getElementById('calidadSelect');
+        const factor = parseFloat(select.value);
+        if (!factor) return; // Si no se ha seleccionado nada, no hacer nada
+
         const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
 
-        // Medidas reales del contenedor para mantener proporcion
+        // Medidas originales
         const originalWidth = contenedor.clientWidth;
         const originalHeight = contenedor.clientHeight;
 
-        // Definir resolucion de exportacion segun factor
+        // Medidas de exportación
         const exportWidth = originalWidth * factor;
         const exportHeight = originalHeight * factor;
 
@@ -445,27 +439,30 @@
         // Renderizar escena
         renderer.render(scene, camera);
 
-        // Fondo blanco y copiado
+        // Fondo blanco y copiado (Estirando para evitar márgenes)
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, exportWidth, exportHeight);
-        ctx.drawImage(canvas3d, 0, 0);
+        ctx.drawImage(canvas3d, 0, 0, exportWidth, exportHeight);
 
         // Restaurar inmediatamente la vista interactiva
         renderer.setSize(originalWidth, originalHeight);
         camera.aspect = originalWidth / originalHeight;
         camera.updateProjectionMatrix();
 
-        // Marca de agua: Playfair Display Negrita
-        ctx.font = "bold " + (16 * factor) + "px 'Playfair Display'";
+        // Marca de agua: Playfair Display Negrita exacta
+        ctx.font = "700 " + (16 * factor) + "px 'Playfair Display'";
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.textAlign = "right";
         ctx.fillText("√(Raiz) Cuadrada²", exportWidth - (20 * factor), exportHeight - (25 * factor));
 
         // Descarga
         const link = document.createElement('a');
-        link.download = 'Grafica_3D.png';
+        link.download = 'Grafica_3D_' + factor + 'x.png';
         link.href = canvasExp.toDataURL('image/png', 1.0);
         link.click();
+
+        // Reiniciar el select para futuras descargas
+        select.value = "";
     }
 
     function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
