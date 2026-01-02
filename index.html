@@ -56,6 +56,43 @@
         }
         .boton-principal { background: black; color: white; border: none; }
         
+        /* Contenedor de descarga mejorado */
+        .descarga-seccion {
+            background: #e9e9e9;
+            border-radius: 30px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid #ddd;
+        }
+        .descarga-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #555;
+            padding: 5px 0;
+        }
+        .calidad-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .btn-calidad {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 8px 5px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-calidad:hover { background: #f0f0f0; transform: translateY(-1px); }
+
         #contenedor-grafica {
             margin-top: 20px; background: white; border-radius: 25px;
             height: 400px; border: 1px solid #eee; overflow: hidden; position: relative;
@@ -137,17 +174,25 @@
                     <option value="60">Baja</option>
                     <option value="90" selected>Normal</option>
                     <option value="120">Alta</option>
-                    <option value="150">Ultra (Cuidado)</option>
+                    <option value="160">Máxima</option>
                 </select>
             </div>
         </div>
 
         <div class="botones-container">
             <button onclick="generarNubePuntos()" class="boton-estilo boton-principal">Generar Sólido</button>
-            <button onclick="menuDescarga()" class="boton-estilo">
-                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="16" style="margin-right:8px"> 
-                Guardar Imagen (Captura)
-            </button>
+            
+            <div class="descarga-seccion">
+                <div class="descarga-header">
+                    <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" width="14" style="margin-right:8px"> 
+                    Descargar PNG
+                </div>
+                <div class="calidad-grid">
+                    <button class="btn-calidad" onclick="descargarCaptura(1)">Calidad baja</button>
+                    <button class="btn-calidad" onclick="descargarCaptura(2)">Calidad media</button>
+                    <button class="btn-calidad" onclick="descargarCaptura(3.5)">Calidad alta</button>
+                </div>
+            </div>
         </div>
 
         <div id="contenedor-grafica"></div>
@@ -198,15 +243,12 @@
 
                 <h3>5. Guía de Colores de los Ejes</h3>
                 <p>Para no perderte en el espacio al rotar:</p>
-                <p>🔴 <span class="eje-color red">Rojo:</span> Eje "X" (Lado a Lado)</p>
-                <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y" (Lado a Lado)</p>
-                <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura / Tradicional)</p>
-
-                <h3>6. Capturas de pantalla</h3>
-                <p>Al presionar <b>Guardar Imagen</b>, podrás elegir la calidad. En celulares se recomienda calidad normal para evitar errores de memoria.</p>
+                <p>🔴 <span class="eje-color red">Rojo:</span> Eje "X"</p>
+                <p>🟢 <span class="eje-color green">Verde:</span> Eje "Y"</p>
+                <p>🔵 <span class="eje-color blue">Azul:</span> Eje "Z" (Altura)</p>
 
                 <div class="nota-autor">
-                    <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida. Ten en cuenta esta guía y prueba copiando las funciones que te dejé para entender lo fascinante que es el espacio 3D.
+                    <b>Nota del autor:</b> Es muy complejo interpretar el espacio. Cuando veía cálculo vectorial y utilizaba Geogebra se me hacía difícil entender algunas funciones. Esta herramienta está desarrollada para ayudarte a tener una vista previa rápida.
                 </div>
             </div>
         </div>
@@ -308,10 +350,9 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     contenedor.appendChild(renderer.domElement);
 
-    // AJUSTE TRADICIONAL: Z HACIA ARRIBA
     const camera = new THREE.PerspectiveCamera(45, contenedor.clientWidth / contenedor.clientHeight, 0.1, 1000);
     camera.position.set(8, 8, 8);
-    camera.up.set(0, 0, 1); // Definir Z como el eje vertical
+    camera.up.set(0, 0, 1); 
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -338,7 +379,6 @@
 
     function dibujarEjes(r) {
         gridGroup.clear();
-        // Grilla acostada en el plano XY
         const grid = new THREE.GridHelper(r * 2, r * 2, 0xeeeeee, 0xf9f9f9);
         grid.rotation.x = Math.PI / 2;
         gridGroup.add(grid);
@@ -348,9 +388,9 @@
         
         for (let i = -Math.floor(r); i <= Math.floor(r); i++) {
             if (i === 0) continue;
-            gridGroup.add(crearEtiqueta(i, i, 0, 0.1)); // X
-            gridGroup.add(crearEtiqueta(i, 0, i, 0.1)); // Y
-            gridGroup.add(crearEtiqueta(i, 0.1, 0, i)); // Z (Altura)
+            gridGroup.add(crearEtiqueta(i, i, 0, 0.1)); 
+            gridGroup.add(crearEtiqueta(i, 0, i, 0.1)); 
+            gridGroup.add(crearEtiqueta(i, 0.1, 0, i)); 
         }
     }
 
@@ -370,62 +410,60 @@
                 for (let y = -r; y <= r; y += step) {
                     for (let z = -r; z <= r; z += step) {
                         const val = expr.evaluate({x, y, z});
-                        // Umbral ajustado dinámicamente para mayor precisión visual
                         if (Math.abs(val) < step * 0.6) pos.push(x, y, z);
                     }
                 }
             }
             const geo = new THREE.BufferGeometry();
             geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            // Punto ligeramente más pequeño para permitir mayor densidad sin empastarse
             puntosObjeto = new THREE.Points(geo, new THREE.PointsMaterial({ color: col, size: 0.05 }));
             scene.add(puntosObjeto);
         } catch (e) { console.log(e); }
     }
 
-    function menuDescarga() {
-        const opc = prompt("Elige la calidad de descarga:\n1: Baja (Rápida)\n2: Media (Recomendada)\n3: Alta (Puede fallar en celulares)", "2");
-        if (opc === "1") descargarCaptura(1);
-        else if (opc === "2") descargarCaptura(2);
-        else if (opc === "3") descargarCaptura(3);
-    }
-
     function descargarCaptura(factor) {
-        // Para evitar recortes en celulares, guardamos la configuración original
-        const originalWidth = contenedor.clientWidth;
-        const originalHeight = contenedor.clientHeight;
-        const aspect = originalWidth / originalHeight;
-
-        // Crear un canvas de exportación interno para no afectar la vista previa
+        const canvas3d = renderer.domElement;
         const canvasExp = document.getElementById('canvas-export');
         const ctx = canvasExp.getContext('2d');
-        
+
+        // Medidas reales del contenedor para mantener proporcion
+        const originalWidth = contenedor.clientWidth;
+        const originalHeight = contenedor.clientHeight;
+
+        // Definir resolucion de exportacion segun factor
         const exportWidth = originalWidth * factor;
         const exportHeight = originalHeight * factor;
 
         canvasExp.width = exportWidth;
         canvasExp.height = exportHeight;
 
-        // Renderizar a la resolución deseada temporalmente
+        // Renderizado fantasma: Ajustar renderer y CAMARA al mismo tiempo
         renderer.setSize(exportWidth, exportHeight, false);
+        camera.aspect = exportWidth / exportHeight;
+        camera.updateProjectionMatrix();
+        
+        // Renderizar escena
         renderer.render(scene, camera);
 
-        // Copiar al canvas de exportación
+        // Fondo blanco y copiado
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, exportWidth, exportHeight);
-        ctx.drawImage(renderer.domElement, 0, 0);
+        ctx.drawImage(canvas3d, 0, 0);
 
-        // Volver a la normalidad inmediatamente
+        // Restaurar inmediatamente la vista interactiva
         renderer.setSize(originalWidth, originalHeight);
-        
-        // Firma opcional
-        ctx.font = "bold " + (12 * factor) + "px 'Open Sans'";
-        ctx.fillStyle = "rgba(0,0,0,0.3)";
-        ctx.textAlign = "right";
-        ctx.fillText("Generado con Graficadora 3D", exportWidth - (15 * factor), exportHeight - (15 * factor));
+        camera.aspect = originalWidth / originalHeight;
+        camera.updateProjectionMatrix();
 
+        // Marca de agua: Playfair Display Negrita
+        ctx.font = "bold " + (16 * factor) + "px 'Playfair Display'";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.textAlign = "right";
+        ctx.fillText("√(Raiz) Cuadrada²", exportWidth - (20 * factor), exportHeight - (25 * factor));
+
+        // Descarga
         const link = document.createElement('a');
-        link.download = 'Captura_3D_Calidad_' + factor + '.png';
+        link.download = 'Grafica_3D.png';
         link.href = canvasExp.toDataURL('image/png', 1.0);
         link.click();
     }
