@@ -130,10 +130,10 @@
             </div>
             <div style="flex: 1.2;">
                 <label>Modo</label>
-                <select id="renderMode">
-                    <option value="puntos" selected>Puntos</option>
-                    <option value="malla">Malla</option>
-                </select>
+               <select id="renderMode">
+    <option value="puntos">Puntos</option>
+    <option value="malla" selected>Malla</option>
+</select>
             </div>
         </div>
 
@@ -353,6 +353,12 @@
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
 
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 10, 10);
+scene.add(light);
+const ambientLight = new THREE.AmbientLight(0x404040);
+scene.add(ambientLight);
+
     let currentObject = null;
     let gridGroup = new THREE.Group();
     scene.add(gridGroup);
@@ -419,13 +425,7 @@
                 
                 currentObject = (mode === 'malla') ? new THREE.Mesh(geometry, mat) : new THREE.Points(geometry, mat);
                 
-                // Luz necesaria para malla
-                if(mode === 'malla') {
-                    const light = new THREE.DirectionalLight(0xffffff, 1);
-                    light.position.set(10, 10, 10);
-                    scene.add(light);
-                    scene.add(new THREE.AmbientLight(0x404040));
-                }
+            
 
             } else {
                 // MODO IMPLÍCITO
