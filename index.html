@@ -163,12 +163,12 @@
         <div id="info-box">Ejes: X (Rojo) | Y (Verde) | Z (Azul)</div>
 
         <div class="pills-nav-container">
-            <button class="pill-btn active" onclick="showTab('cuadricas', this)">Cuadricas</button>
-            <button class="pill-btn" onclick="showTab('funciones', this)">Funciones</button>
-            <button class="pill-btn" onclick="showTab('parametricas', this)">Paramétricas</button>
-            <button class="pill-btn" onclick="showTab('planos', this)">Planos</button>
-            <button class="pill-btn" onclick="showTab('simbolos', this)">Simbolos</button>
-            <button class="pill-btn" onclick="showTab('guia', this)">Guia</button>
+            <button class="pill-btn active" onclick="showTab('cuadricas', this)">CUADRICAS</button>
+            <button class="pill-btn" onclick="showTab('funciones', this)">FUNCIONES</button>
+            <button class="pill-btn" onclick="showTab('parametricas', this)">PARAMETRICAS</button>
+            <button class="pill-btn" onclick="showTab('planos', this)">PLANOS</button>
+            <button class="pill-btn" onclick="showTab('simbolos', this)">SIMBOLOS</button>
+            <button class="pill-btn" onclick="showTab('guia', this)">GUIA</button>
         </div>
 
         <div id="cuadricas" class="tab-content active"><div class="symbols-grid"></div></div>
@@ -259,10 +259,6 @@
     <h3 style="font-size: 24px; margin-top: 35px; font-weight: bold;">7. Botón de Generar Sólido</h3>
     <p><strong>Importante:</strong> Cualquier cambio realizado en la ecuación, el rango o la densidad no se reflejará automáticamente. Debe presionar el botón <strong>Generar Sólido</strong> para actualizar la gráfica.</p>
 
-    <div style="border: 1px solid #ccc; padding: 25px; border-radius: 20px; margin-top: 35px; background: #fafafa; font-style: italic;">
-        <strong>Nota del autor:</strong>
-        <p style="margin-top: 10px;">Interpretar el espacio tridimensional puede ser complejo. Esta herramienta ha sido desarrollada para facilitar la comprensión visual rápida de funciones vectoriales y superficies. Le invito a utilizar las funciones de ejemplo para familiarizarse con el comportamiento de los objetos en el espacio.</p>
-    </div>
 
 </div>
     </div>
@@ -387,11 +383,26 @@
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
 
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(10, 10, 10);
-scene.add(light);
-const ambientLight = new THREE.AmbientLight(0x404040);
+    // 1. Luz Ambiental: Elimina las sombras totales (el "negro" absoluto)
+// Un gris suave (0x888888) permite que las sombras tengan detalle
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
 scene.add(ambientLight);
+
+// 2. Luz Principal (Frontal Superior Derecha)
+const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+mainLight.position.set(10, 10, 10);
+scene.add(mainLight);
+
+// 3. Luz de Relleno (Trasera Inferior Izquierda)
+// Esta es la que "limpia" el negro de atrás y de abajo
+const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
+backLight.position.set(-10, -10, -10);
+scene.add(backLight);
+
+// 4. Luz Cenital (Desde arriba directamente)
+const topLight = new THREE.DirectionalLight(0xffffff, 0.3);
+topLight.position.set(0, 10, 0);
+scene.add(topLight);
 
     let currentObject = null;
     let gridGroup = new THREE.Group();
