@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Graficadora 3D Pro - Raíz Cuadrada</title>
+    <title>Graficadora 3D  - Raíz Cuadrada</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap');
@@ -96,6 +98,19 @@
 
         .guia-uso-container { background: white; border-radius: 25px; padding: 25px; color: #444; border: 1px solid #ccc; }
         .guia-uso-container h2 { font-family: 'Playfair Display', serif; font-size: 24px; margin-top: 0; color: #000; }
+        #latex-visor {
+    background: white;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 1.2rem;
+    overflow-x: auto;
+}
     </style>
 </head>
 <body>
@@ -107,9 +122,10 @@
             <p>√(Raiz) Cuadrada²</p>
         </div>
 
-        <label>Ecuación (f(x,y,z)=0 o x|y|z con u,v)</label>
+<div id="latex-visor">\[ x^2 + y^2 + z^2 - 9 = 0 \]</div>
+<label>Ecuación (f(x,y,z)=0 o x|y|z con u,v)</label>
         <div class="input-group">
-            <input id="ecuacion" type="text" placeholder="x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9">
+            <input id="ecuacion" type="text" placeholder="x^2 + y^2 + z^2 - 9" value="x^2 + y^2 + z^2 - 9" oninput="actualizarVisor()">
             <div class="color-picker-container">
                 <input type="color" id="colorSurface" value="#8e44ad">
             </div>
@@ -358,6 +374,7 @@
         const input = document.getElementById('ecuacion');
         if (id === 'simbolos') { input.value += val; } 
         else { input.value = val; generarGrafica(); }
+        actualizarVisor();
         input.focus();
     }
 
@@ -536,6 +553,38 @@ scene.add(topLight);
     }
 
     function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+    
+   function actualizarVisor() {
+    const input = document.getElementById('ecuacion').value;
+    const visor = document.getElementById('latex-visor');
+    
+    // Si el input está vacío, limpiamos el visor
+    if (!input.trim()) {
+        visor.innerHTML = "";
+        return;
+    }
+
+    try {
+        // 1. Convertimos el texto (x/2) en un objeto matemático
+        const nodo = math.parse(input);
+        
+        // 2. Convertimos ese objeto a código LaTeX real
+        // Esto transforma "x/2" en "\frac{x}{2}" automáticamente
+        const codigoLatex = nodo.toTex({parenthesis: 'keep', implicit: 'hide'});
+        
+        // 3. Lo inyectamos en el visor con los delimitadores de MathJax
+        visor.innerHTML = `\\[ ${codigoLatex} = 0 \\]`;
+        
+        // 4. Le decimos a MathJax que lo "dibuje" bonito
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([visor]);
+        }
+    } catch (e) {
+        // Mientras el usuario escribe algo incompleto (como "x/"), 
+        // mostramos el texto plano para evitar que el visor parpadee o de error
+        visor.innerHTML = `\\[ ${input} \\]`;
+    }
+}
     
     window.addEventListener('resize', () => {
         camera.aspect = contenedor.clientWidth / contenedor.clientHeight;
